@@ -11,23 +11,34 @@ class Field {
   public $isUnSigned = false;
   public $hasDefault = false;
   public $length = false;
-  public $predefined = false;
-  public $autoIncrement = false;
-  public $sql = '';
+  
+  public $primaryKey = false;
 
+  public $foreignKey = false;
+  
+  public $sql = '';
+  public $predefined = false;
+  
   function __construct ($table) {
     $this->table = $table;
     array_push($this->table->fields, $this);
   }
 
   public function setSql () {
-    $this->sql .= '`' 
-      . $this->name . '` ' // set name
-      . $this->type . ($this->length != false ? '(' . $this->length . ')' : '') . ' ' // set type with length
-      . ($this->isUnSigned ? 'UNSIGNED' : '') . ' ' // unsigned
-      . (!$this->isNullable ? 'NOT NULL' : '') . ' '
-      . ($this->hasDefault != false ? 'DEFAULT \'' . $this->hasDefault . '\'' : '') . ' '
-      . ($this->autoIncrement ? 'AUTO_INCREMENT primary KEY' : '');
+    // name
+    $this->sql .= '`' . $this->name . '`' . ' ';
+    // type
+    $this->sql .= $this->type . ($this->length != false ? '(' . $this->length . ')' : '') . ' '; 
+    // unsigned
+    $this->sql .= ($this->isUnSigned ? 'UNSIGNED' : '') . ' ';
+    // null
+    $this->sql .= (!$this->isNullable ? 'NOT NULL' : '') . ' ';
+    // default
+    $this->sql .= ($this->hasDefault != false ? 'DEFAULT \'' . $this->hasDefault . '\'' : '') . ' ';
+    // auto increment
+    $this->sql .= ($this->autoIncrement ? 'AUTO_INCREMENT ' : '');
+
+    return $this;
   }
 
   public function getSql () {
@@ -40,6 +51,20 @@ class Field {
     $field->name = $name;
     $field->type = $type;
     return $field;
+  }
+
+  public function isId ($name, $auto) {
+    return $this->newField($name, 'int', $auto)->unsigned()->setLength(11);
+  }
+
+  public function setPrimaryKey () {
+    $this->primaryKey = true;
+    return $this;
+  }
+
+  public function foreign ($column, $on, $foreign) {
+    $this->foreignKey = [$column, $on, $foreign];
+    return $this;
   }
 
   public function setType($type, $name) {
@@ -68,8 +93,12 @@ class Field {
     return $this;
   }
 
-  public function primaryKey ($name) {
-    return $this->newField($name, 'int', true)->unsigned();
+  public function index ($name) {
+    return $this->isId($name, false);
+  }
+
+  public function autoIncrement ($name) {
+    return $this->isId($name, true)->setPrimaryKey();
   }
 
   public function varchar ($name) {

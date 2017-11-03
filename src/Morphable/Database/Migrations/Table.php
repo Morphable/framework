@@ -8,8 +8,9 @@ class Table {
   public $type = 'InnoDB';
   public $fields = [];
   public $name;
-  private $query;
+  public $query;
   private $primaryKey = false;
+  private $foreignKeys = [];
 
   function __construct($name, $fields) {
     $this->name = $name;
@@ -39,15 +40,32 @@ class Table {
 
     foreach ($this->fields as $key => $value) {
       $field = $value;
+      if ($field->primaryKey) $this->primaryKey = $field;
+      if ($field->foreignKey != false) array_push($this->foreignKeys, $field);
+
       if ($field->predefined != false) {
         $sql .= $this->predefinedFields($field->predefined);
       } else {
         $field->setSql();
         $sql .= $field->getSql();
       }
-      $sql .= ($key === count($this->fields) -1 ? '' : ', ');
+      $sql .= ', ';
       
     }
+
+    $sql .= 'primary key (' . $this->primaryKey->name . '),';
+
+    // var_dump($this->foreignKeys);
+
+    if (count($this->foreignKeys) > 0) {
+      foreach($this->foreignKeys as $foreignField) {
+        $sql .= 'FOREIGN KEY (' . $foreignField->foreignKey[0] . ') REFERENCES '
+                . $foreignField->foreignKey[1] .'('.$foreignField->foreignKey[2].'),';
+      }
+    }
+
+    $sql = substr($sql, 0, -1);
+
     $sql .= ')' . 'ENGINE=' . $this->type . ' DEFAULT CHARSET=latin1;';
     $this->query = preg_replace('!\s+!', ' ', $sql);
   }
