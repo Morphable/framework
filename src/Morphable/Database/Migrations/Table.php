@@ -52,8 +52,18 @@ class Table {
     $this->query = preg_replace('!\s+!', ' ', $sql);
   }
 
-  public function run () {
-    
+  public function drop ($connection) {
+    $query = '
+      DROP TABLE ' . $this->name . ';
+    ';
+
+    $connection->exec($query);
+    return 'Table successfully dropped';
+  }
+
+  public function create ($connection) {
+    $connection->exec($this->query);
+    return 'Query successfully executed!';
   }
 
   public function setType ($type) {
