@@ -2,7 +2,9 @@
 
 namespace Morphable\Database\Migrations;
 
-class Field {
+require 'FieldTypes.php';
+
+class Field extends FieldTypes {
 
   private $table;
   public $type;
@@ -36,7 +38,7 @@ class Field {
     // null
     $this->sql .= (!$this->isNullable ? 'NOT NULL' : '') . ' ';
     // default
-    $this->sql .= ($this->hasDefault != false ? 'DEFAULT \'' . $this->hasDefault . '\'' : '') . ' ';
+    $this->sql .= ($this->hasDefault != false || is_numeric($this->hasDefault) != false ? 'DEFAULT \'' . $this->hasDefault . '\'' : '') . ' ';
     // auto increment
     $this->sql .= ($this->autoIncrement ? 'AUTO_INCREMENT ' : '');
 
@@ -104,34 +106,6 @@ class Field {
   public function setLength ($length) {
     $this->length = $length;
     return $this;
-  }
-
-  public function index ($name) {
-    return $this->isId($name, false);
-  }
-
-  public function autoIncrement ($name) {
-    return $this->isId($name, true)->setPrimaryKey();
-  }
-
-  public function varchar ($name) {
-    return $this->newField($name, 'varchar')->setLength(255);
-  }
-
-  public function integer ($name) {
-    return $this->newField($name, 'int');
-  }
-
-  public function boolean ($name) {
-    return $this->newField($name, 'boolean');
-  }
-
-  public function date ($name) {
-    return $this->newField($name, 'date');
-  }
-
-  public function timestamp ($name) {
-    return $this->newField($name, 'timestamp');
   }
 
   public function nullable () {
