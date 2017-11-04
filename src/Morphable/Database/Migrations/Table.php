@@ -1,5 +1,6 @@
 <?php
 namespace Morphable\Database\Migrations;
+use PDO;
 
 require 'Field.php';
 
@@ -9,8 +10,8 @@ class Table {
   public $fields = [];
   public $name;
   public $query;
-  private $primaryKey = false;
-  private $foreignKeys = [];
+  public $primaryKey = false;
+  public $foreignKeys = [];
 
   function __construct($name, $fields) {
     $this->name = $name;
@@ -35,7 +36,7 @@ class Table {
     }
   }
 
-  public function setQuery () {
+  public function getQuery () {
     $sql = 'CREATE TABLE `' . $this->name . '`( ';
 
     foreach ($this->fields as $key => $value) {
@@ -55,12 +56,13 @@ class Table {
 
     $sql .= 'primary key (' . $this->primaryKey->name . '),';
 
-    // var_dump($this->foreignKeys);
-
     if (count($this->foreignKeys) > 0) {
       foreach($this->foreignKeys as $foreignField) {
-        $sql .= 'FOREIGN KEY (' . $foreignField->foreignKey[0] . ') REFERENCES '
-                . $foreignField->foreignKey[1] .'('.$foreignField->foreignKey[2].'),';
+        $sql .= 'CONSTRAINT `foreign_' . $this->name . '_' . $foreignField->foreignKey[0] . '_' . $foreignField->foreignKey[2] . '` ';
+        $sql .= 'FOREIGN KEY (' . $foreignField->foreignKey[0] . ')';
+        $sql .= ' REFERENCES ';
+        $sql .= $foreignField->foreignKey[1] .'('.$foreignField->foreignKey[2].') ';
+        $sql .= ' ON DELETE ' . strtoupper($foreignField->_onDelete) . ' ON UPDATE ' . strtoupper($foreignField->_onDelete) . ',';
       }
     }
 
@@ -68,19 +70,70 @@ class Table {
 
     $sql .= ')' . 'ENGINE=' . $this->type . ' DEFAULT CHARSET=latin1;';
     $this->query = preg_replace('!\s+!', ' ', $sql);
+
+    return $sql;
+  }
+
+  public function dropKey ($connection, $constraint) {
+    $sql = 'alter table ' . $this->name . ' drop foreign key ' . $constraint;
+    if ($this->tableExists($connection, $this->name)) {
+      if ($this->foreignExists($connection, $constraint)) {
+        $connection->query($sql);
+        return 'key is dropped';
+      }
+      return 'foreign key does not exist';
+    }
+    return 'table does not exists';
+  }
+
+  public function foreignExists ($connection, $constraint) {
+
+    $dbName = $connection->query('SELECT database()')->fetchColumn();
+
+    $sql = '
+    SELECT * FROM information_schema.TABLE_CONSTRAINTS 
+    WHERE information_schema.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = \'FOREIGN KEY\'
+    AND information_schema.TABLE_CONSTRAINTS.TABLE_SCHEMA = \'' . $dbName . '\'
+    AND information_schema.TABLE_CONSTRAINTS.TABLE_NAME = \''. $this->name .'\';';
+
+    $stmt = $connection->query($sql);
+    $result = $stmt->fetchAll();
+
+    foreach($result as $column) {
+      if ($column['CONSTRAINT_NAME'] == $constraint) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  public function tableExists ($connection, $table) {
+    $sql = 'SHOW TABLES LIKE \'' . $this->name . '\'';
+    $stmt = $connection->query($sql);
+    $count = $stmt->rowCount();
+
+    if ($count > 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public function drop ($connection) {
-    $query = '
-      DROP TABLE ' . $this->name . ';
-    ';
+    $drop = 'DROP TABLE ' . $this->name;
 
-    $connection->exec($query);
-    return 'Table successfully dropped';
+    if ($this->tableExists($connection, $this->name)) {
+      $connection->exec($drop);
+      return 'Table successfully dropped';
+    } else {
+      return 'Table does not exists';
+    }
+
   }
 
   public function create ($connection) {
-    $connection->exec($this->query);
+    $connection->exec($this->getQuery());
     return 'Query successfully executed!';
   }
 

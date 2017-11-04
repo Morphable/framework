@@ -15,6 +15,8 @@ class Field {
   public $primaryKey = false;
 
   public $foreignKey = false;
+  public $_onUpdate = 'cascade';
+  public $_onDelete = 'cascade';
   
   public $sql = '';
   public $predefined = false;
@@ -64,6 +66,17 @@ class Field {
 
   public function foreign ($column, $on, $foreign) {
     $this->foreignKey = [$column, $on, $foreign];
+    // array_push($this->table->foreignKeys, $this);
+    return $this;
+  }
+
+  public function onUpdate ($type) {
+    $this->_onUpdate = $type;
+    return $this;
+  }
+
+  public function onDelete ($type) {
+    $this->_onDelete = $type;
     return $this;
   }
 
