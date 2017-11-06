@@ -53,16 +53,6 @@ class Connection {
     }
   }
 
-  public function connectHost () {
-    try {
-      $pdo = new PDO($this->getConnectionHost(), $this->user, $this->pass);
-      $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-      return $pdo;
-    } catch (PDOException $e) {
-      echo 'Connection failed: ' . $e->getMessage();
-    }
-  }
-
   public function getInstance () {
     try {
       $pdo = new PDO($this->getConnectionHost('name'), $this->user, $this->pass);
