@@ -1,6 +1,6 @@
 <?php
 
-namespace Morphable\Database\Migrations\Migrate;
+namespace Morphable\Database\Migrations;
 
 use Morphable\Database;
 

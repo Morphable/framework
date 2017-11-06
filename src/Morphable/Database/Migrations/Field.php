@@ -2,8 +2,6 @@
 
 namespace Morphable\Database\Migrations;
 
-require 'FieldTypes.php';
-
 class Field extends FieldTypes {
 
   private $table;

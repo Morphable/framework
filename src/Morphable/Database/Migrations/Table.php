@@ -2,7 +2,7 @@
 namespace Morphable\Database\Migrations;
 use PDO;
 
-require 'Field.php';
+// require 'Field.php';
 
 class Table {
 
