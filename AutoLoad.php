@@ -20,9 +20,8 @@ $autoloader->addFile(_DatabasePath . 'Connection.php');
  */
 $migrationsPath = _DatabasePath . 'Migrations/';
 $autoloader->addFile($migrationsPath . 'Table.php');
-$autoloader->addFile($migrationsPath . 'FieldTypes.php');
 $autoloader->addFile($migrationsPath . 'Field.php');
-$autoloader->addFile($migrationsPath . 'Migrate.php');
+$autoloader->addFile($migrationsPath . 'TableBuilder.php');
 unset($migrationsPath);
 
 $autoloader->autoload();

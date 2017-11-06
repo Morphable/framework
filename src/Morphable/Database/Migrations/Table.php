@@ -1,145 +1,396 @@
 <?php
-namespace Morphable\Database\Migrations;
-use PDO;
 
-// require 'Field.php';
+namespace Morphable\Database\Migrations;
 
 class Table {
 
-  public $type = 'InnoDB';
+  /**
+   * @var array
+   */
   public $fields = [];
-  public $name;
-  public $query;
-  public $primaryKey = false;
-  public $foreignKeys = [];
 
-  function __construct($name, $fields) {
-    $this->name = $name;
-    $fields(new Field($this));
-    array_splice($this->fields, 0, 1);
-  }
+  /**
+   * @var string
+   */
+  public $table;
 
-  public function predefinedFields ($case, $name = false) {
-    switch ($case) {
-      case 'updated_at':
-        return '`' . ($name != false ? $name : 'updated_at') . '` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP';
-        break;
-      case 'created_at':
-        return '`' . ($name != false ? $name : 'created_at') . '` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP';
-        break;
-      case 'is_active':
-        return '`' . ($name != false ? $name : 'is_active') . '` tinyint(1) NOT NULL DEFAULT \'1\'';
-        break;
-      default:
-        return false;
-        break;
+  /**
+   * @var string
+   */
+  public $prefix = '';
+
+  /**
+   * @var int
+   */
+  public $defaultStringLength = 255;
+
+  /**
+   * @var string
+   */
+  public $collation = 'utf8_unicode_ci';
+
+  /**
+   * @var string
+   */
+  public $engine = 'InnoDB';
+
+  /**
+   * @var string
+   */
+  public $charset = "utf8";
+
+  /**
+   * @var array
+   */
+  public $foreigns = [];
+
+  /**
+   * @var string
+   */
+  public $primaryKey;
+
+  /**
+   * @param $table: table name
+   * @param $callback: execute callback
+   * @return $this if callback is not null
+   */
+  function __construct ($table, $callback = null) {
+    $this->table = $table;
+
+    if ($callback != null) {
+      $callback($this);
     }
   }
 
-  public function getQuery () {
-    $sql = 'CREATE TABLE `' . $this->name . '`( ';
-
-    foreach ($this->fields as $key => $value) {
-      $field = $value;
-      if ($field->primaryKey) $this->primaryKey = $field;
-      if ($field->foreignKey != false) array_push($this->foreignKeys, $field);
-
-      if ($field->predefined != false) {
-        $sql .= $this->predefinedFields($field->predefined);
-      } else {
-        $field->setSql();
-        $sql .= $field->getSql();
-      }
-      $sql .= ', ';
-      
-    }
-
-    $sql .= 'primary key (' . $this->primaryKey->name . '),';
-
-    if (count($this->foreignKeys) > 0) {
-      foreach($this->foreignKeys as $foreignField) {
-        $sql .= 'CONSTRAINT `foreign_' . $this->name . '_' . $foreignField->foreignKey[0] . '_' . $foreignField->foreignKey[2] . '` ';
-        $sql .= 'FOREIGN KEY (' . $foreignField->foreignKey[0] . ')';
-        $sql .= ' REFERENCES ';
-        $sql .= $foreignField->foreignKey[1] .'('.$foreignField->foreignKey[2].') ';
-        $sql .= ' ON DELETE ' . strtoupper($foreignField->_onDelete) . ' ON UPDATE ' . strtoupper($foreignField->_onDelete) . ',';
-      }
-    }
-
-    $sql = substr($sql, 0, -1);
-
-    $sql .= ')' . 'ENGINE=' . $this->type . ' DEFAULT CHARSET=latin1;';
-    $this->query = preg_replace('!\s+!', ' ', $sql);
-
-    return $sql;
-  }
-
-  public function dropKey ($connection, $constraint) {
-    $sql = 'alter table ' . $this->name . ' drop foreign key ' . $constraint;
-    if ($this->tableExists($connection, $this->name)) {
-      if ($this->foreignExists($connection, $constraint)) {
-        $connection->query($sql);
-        return 'key is dropped';
-      }
-      return 'foreign key does not exist';
-    }
-    return 'table does not exists';
-  }
-
-  public function foreignExists ($connection, $constraint) {
-
-    $dbName = $connection->query('SELECT database()')->fetchColumn();
-
-    $sql = '
-    SELECT * FROM information_schema.TABLE_CONSTRAINTS 
-    WHERE information_schema.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = \'FOREIGN KEY\'
-    AND information_schema.TABLE_CONSTRAINTS.TABLE_SCHEMA = \'' . $dbName . '\'
-    AND information_schema.TABLE_CONSTRAINTS.TABLE_NAME = \''. $this->name .'\';';
-
-    $stmt = $connection->query($sql);
-    $result = $stmt->fetchAll();
-
-    foreach($result as $column) {
-      if ($column['CONSTRAINT_NAME'] == $constraint) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  public function tableExists ($connection, $table) {
-    $sql = 'SHOW TABLES LIKE \'' . $this->name . '\'';
-    $stmt = $connection->query($sql);
-    $count = $stmt->rowCount();
-
-    if ($count > 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  public function drop ($connection) {
-    $drop = 'DROP TABLE ' . $this->name;
-
-    if ($this->tableExists($connection, $this->name)) {
-      $connection->exec($drop);
-      return 'Table successfully dropped';
-    } else {
-      return 'Table does not exists';
-    }
-
-  }
-
-  public function create ($connection) {
-    $connection->exec($this->getQuery());
-    return 'Query successfully executed!';
-  }
-
-  public function setType ($type) {
-    $this->type = $type;
+  /**
+   * @param $index: foreign key
+   * @param $table: reference table
+   * @param $field: references id
+   */
+  public function foreign ($index, $table, $field) {
+    $this->foreigns[] = [$index, $table, $field];
     return $this;
+  }
+
+  public function getForeignKeys () {
+    return $this->foreigns;
+  }
+
+  /**
+   * @return $table
+   */
+  public function getTable () {
+    return $this->table;
+  }
+
+  /**
+   * @return $engine
+   */
+  public function getEngine () {
+    return $this->engine;
+  }
+
+  /**
+   * @return $prefix
+   */
+  public function getPrefix () {
+    return $this->prefix;
+  }
+
+  /**
+   * @return $collation
+   */
+  public function getCollation () {
+    return $this->collation;
+  }
+
+  /**
+   * @return $charset
+   */
+  public function getCharset () {
+    return $this->charset;
+  }
+
+  /**
+   * @return $fields
+   */
+  public function getFields () {
+    return $this->fields;
+  }
+
+  /**
+   * Add a field to the table
+   * @param $name: field name
+   * @param $type: type of field
+   * @param $predefined: field is predefined
+   * @return new Field()
+   */
+  private function addField ($name, $type, $predefined = null) {
+    $field = new Field($name, $type, $predefined);
+    $this->fields[] = $field;
+    return $field;
+  }
+
+  /**
+   * Predefined created at field
+   * @param $name: field name
+   * @return new Field() with predefined createdAt
+   */
+  public function createdAt ($name = 'created_at') {
+    return $this->addField($name, 'timestamp')->default('CURRENT_TIMESTAMP');
+  }
+
+  /**
+   * Predefined updated at field
+   * @param $name: field name
+   * @return new Field() with predefined createdAt
+   */
+  public function updatedAt ($name = 'updated_at') {
+    return $this->addField($name, 'timestamp')->attribute('on update CURRENT_TIMESTAMP');
+  }
+
+  /**
+   * Predefined is active field
+   * @param $name: field name
+   * @return new Field() with predefined createdAt
+   */
+  public function isActive ($name = 'is_active') {
+    return $this->addField($name, 'boolean')->default(1);
+  }
+
+  /**
+   * Create a new primary key field
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function primary ($name = 'id') {
+    $this->primaryKey = $name;
+    return $this->addField($name, 'int')->primary()->autoincrement()->unsigned()->length(11);
+  }
+
+  /**
+   * Create a new index key field
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function index ($name) {
+    return $this->addField($name, 'int')->index()->unsigned()->length(11);
+  }
+  
+  /**
+   * Create a new Field with type integer
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function int ($name) {
+    return $this->addField($name, 'int');
+  }
+
+  /**
+   * Create a new Field with type tiny int
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function tinyint ($name) {
+    return $this->addField($name, 'tinyint');
+  }
+
+  /**
+   * Create a new Field with type small int
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function smallint ($name) {
+    return $this->addField($name, 'smallint');
+  }
+
+  /**
+   * Create a new Field with type medium int
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function mediumint ($name) {
+    return $this->addField($name, 'mediumint');
+  }
+
+  /**
+   * Create a new Field with type big int
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function bigint ($name) {
+    return $this->addField($name, 'bigint');
+  }
+
+  /**
+   * Create a new Field with type decimal
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function decimal ($name) {
+    return $this->addField($name, 'decimal');
+  }
+
+  /**
+   * Create a new Field with type float
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function float ($name) {
+    return $this->addField($name, 'float');
+  }
+
+  /**
+   * Create a new Field with type double
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function double ($name) {
+    return $this->addField($name, 'double');
+  }
+
+  /**
+   * Create a new Field with type real
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function real ($name) {
+    return $this->addField($name, 'real');
+  }
+
+  /**
+   * Create a new Field with type bit
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function bit ($name) {
+    return $this->addField($name, 'bit');
+  }
+
+  /**
+   * Create a new Field with type boolean
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function boolean ($name) {
+    return $this->addField($name, 'boolean');
+  }
+
+  /**
+   * Create a new Field with type serial
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function serial ($name) {
+    return $this->addField($name, 'serial');
+  }
+  
+  /**
+   * Create a new Field with type char
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function char ($name) {
+    return $this->addField($name, 'char');
+  }
+
+  /**
+   * Create a new Field with type varchar
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function varchar ($name) {
+    return $this->addField($name, 'varchar')->length($this->defaultStringLength);
+  }
+
+  /**
+   * Create a new Field with type text
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function text ($name) {
+    return $this->addField($name, 'text');
+  }
+
+  /**
+   * Create a new Field with type tiny text
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function tinytext ($name) {
+    return $this->addField($name, 'tinytext');
+  }
+
+  /**
+   * Create a new Field with type medium text
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function mediumtext ($name) {
+    return $this->addField($name, 'mediumtext');
+  }
+
+  /**
+   * Create a new Field with type long text
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function longtext ($name) {
+    return $this->addField($name, 'longtext');
+  }
+  
+  /**
+   * Create a new Field with type enum
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function enum ($name) {
+    return $this->addField($name, 'enum');
+  }
+
+  /**
+   * Create a new Field with type date
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function date ($name) {
+    return $this->addField($name, 'date');
+  }
+
+  /**
+   * Create a new Field with type date time
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function datetime ($name) {
+    return $this->addField($name, 'datetime');
+  }
+
+  /**
+   * Create a new Field with type timestamp
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function timestamp ($name) {
+    return $this->addField($name, 'timestamp');
+  }
+
+  /**
+   * Create a new Field with type time
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function time ($name) {
+    return $this->addField($name, 'time');
+  }
+
+  /**
+   * Create a new Field with type year
+   * @param $name: field name
+   * @return new Field()
+   */
+  public function year ($name) {
+    return $this->addField($name, 'year');
   }
 
 }
