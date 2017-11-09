@@ -1,0 +1,23 @@
+<?php
+
+require __DIR__.'/Autoload.php';
+
+use Morphable\Console\Console;
+use Morphable\Database;
+
+if (!empty($argv)) {
+
+  $connection = Database\Connection::staticInstance([
+    'host' => 'localhost',
+    'port' => 3306,
+    'user' => 'root',
+    'pass' => '',
+    'dbName' => 'test'
+  ]);
+
+  $console = new Console($connection);
+  $console->setArgv($argv);
+  $console->registerMainCommands();
+  $console->router();
+
+}

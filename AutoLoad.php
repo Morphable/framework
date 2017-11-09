@@ -1,11 +1,10 @@
 <?php
+$rootPath = __DIR__ . '/';
+$morphablePath = $rootPath . 'src/Morphable/';
+$databasePath = $morphablePath . 'Database/';
+$consolePath = $morphablePath . 'Console/';
 
-define('_RootPath', __DIR__ . '/');
-define('_MorphablePath', _RootPath . 'src/Morphable/');
-define('_ConsolePath', _MorphablePath . 'Console/');
-define('_DatabasePath', _MorphablePath . 'Database/');
-
-require _MorphablePath . 'AutoLoader.php';
+require $morphablePath . 'AutoLoader.php';
 
 $autoloader = new Morphable\Autoloader;
 
@@ -13,15 +12,21 @@ $autoloader = new Morphable\Autoloader;
  * Require Base
  */
 $autoloader->addFile('config.php');
-$autoloader->addFile(_DatabasePath . 'Connection.php');
-$autoloader->addFile(_DatabasePath . 'Manager.php');
+$autoloader->addFile($databasePath . 'Connection.php');
+$autoloader->addFile($databasePath . 'Manager.php');
 
 /**
  * Require Migrations
  */
-$migrationsPath = _DatabasePath . 'Migrations/';
+$migrationsPath = $databasePath . 'Migrations/';
 $autoloader->addFile($migrationsPath . 'Table.php');
 $autoloader->addFile($migrationsPath . 'Field.php');
 $autoloader->addFile($migrationsPath . 'TableBuilder.php');
+
+/**
+ * Require Console
+ */
+$autoloader->addFile($consolePath . 'Console.php');
+$autoloader->addFile($consolePath . 'Command.php');
 
 $autoloader->autoload();
