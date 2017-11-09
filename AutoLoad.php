@@ -14,6 +14,7 @@ $autoloader = new Morphable\Autoloader;
  */
 $autoloader->addFile('config.php');
 $autoloader->addFile(_DatabasePath . 'Connection.php');
+$autoloader->addFile(_DatabasePath . 'Manager.php');
 
 /**
  * Require Migrations
@@ -22,6 +23,5 @@ $migrationsPath = _DatabasePath . 'Migrations/';
 $autoloader->addFile($migrationsPath . 'Table.php');
 $autoloader->addFile($migrationsPath . 'Field.php');
 $autoloader->addFile($migrationsPath . 'TableBuilder.php');
-unset($migrationsPath);
 
 $autoloader->autoload();

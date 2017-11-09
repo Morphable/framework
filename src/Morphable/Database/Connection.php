@@ -53,6 +53,27 @@ class Connection {
     }
   }
 
+  static function validateInstance ($db) {
+    return [
+      'host' => (!$db['host'] ? '127.0.0.1' : $db['host']),
+      'port' => (!$db['port'] ? 3306 : $db['port']),
+      'user' => (!$db['user'] ? 'root' : $db['user']),
+      'pass' => (!$db['pass'] ? '' : $db['pass']),
+      'dbName' => $db['dbName']
+    ];
+  }
+
+  static function staticInstance ($db) {
+    try {
+      $db = self::validateInstance($db);
+      $pdo = new PDO("mysql:host={$db['host']};port={$db['port']};dbname={$db['dbName']}", $db['user'], $db['pass']);
+      $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      return $pdo;
+    } catch (PDOException $e) {
+      echo 'Connection failed: ' . $e->getMessage();
+    }
+  }
+
   public function getInstance () {
     try {
       $pdo = new PDO($this->getConnectionHost('name'), $this->user, $this->pass);

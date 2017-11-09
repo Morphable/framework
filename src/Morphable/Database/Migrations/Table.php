@@ -1,6 +1,7 @@
 <?php
 
 namespace Morphable\Database\Migrations;
+use Morphable\Database;
 
 class Table {
 
@@ -50,11 +51,19 @@ class Table {
   public $primaryKey;
 
   /**
-   * @param $table: table name
-   * @param $callback: execute callback
+   * @var object
+   */
+  private $connection;
+
+  /**
+   * Constructor
+   * @param object connection
+   * @param string table
+   * @param function callback 
    * @return $this if callback is not null
    */
-  function __construct ($table, $callback = null) {
+  function __construct ($connection, $table, $callback = null) {
+    $this->connection = $connection;
     $this->table = $table;
 
     if ($callback != null) {
@@ -63,56 +72,93 @@ class Table {
   }
 
   /**
-   * @param $index: foreign key
-   * @param $table: reference table
-   * @param $field: references id
+   * Drop a table
+   * @return function
+   */
+  public function drop () {
+    return TableBuilder::drop($this->connection, $this->table);
+  }
+
+  /**
+   * Drop a foreign key
+   * @param string constraint
+   * @return function
+   */
+  public function dropForeignKey ($constraint) {
+    return TableBuilder::dropForeignKey($this->connection, $this->table, $constraint);
+  }
+  
+  /**
+   * Create a table
+   * @return function
+   */
+  public function create () {
+    return TableBuilder::create($this->connection, $this);
+  } 
+
+  /**
+   * Add a foreign key
+   * @param string $index
+   * @param string $table
+   * @param string $field
+   * @return self
    */
   public function foreign ($index, $table, $field) {
     $this->foreigns[] = [$index, $table, $field];
     return $this;
   }
 
+  /**
+   * Get foreign keys
+   * @return array<array<string>>
+   */
   public function getForeignKeys () {
     return $this->foreigns;
   }
 
   /**
-   * @return $table
+   * Get table
+   * @return string
    */
   public function getTable () {
     return $this->table;
   }
 
   /**
-   * @return $engine
+   * Get engine
+   * @return string
    */
   public function getEngine () {
     return $this->engine;
   }
 
   /**
-   * @return $prefix
+   * Get preifx
+   * @return string
    */
   public function getPrefix () {
     return $this->prefix;
   }
 
   /**
-   * @return $collation
+   * Get collation
+   * @return string
    */
   public function getCollation () {
     return $this->collation;
   }
 
   /**
-   * @return $charset
+   * Get charset
+   * @return string
    */
   public function getCharset () {
     return $this->charset;
   }
 
   /**
-   * @return $fields
+   * Get fields
+   * @return array<object>
    */
   public function getFields () {
     return $this->fields;
@@ -120,13 +166,12 @@ class Table {
 
   /**
    * Add a field to the table
-   * @param $name: field name
-   * @param $type: type of field
-   * @param $predefined: field is predefined
-   * @return new Field()
+   * @param string name
+   * @param string type
+   * @return object
    */
-  private function addField ($name, $type, $predefined = null) {
-    $field = new Field($name, $type, $predefined);
+  private function addField ($name, $type) {
+    $field = new Field($name, $type);
     $this->fields[] = $field;
     return $field;
   }
@@ -134,7 +179,7 @@ class Table {
   /**
    * Predefined created at field
    * @param $name: field name
-   * @return new Field() with predefined createdAt
+   * @return self
    */
   public function createdAt ($name = 'created_at') {
     return $this->addField($name, 'timestamp')->default('CURRENT_TIMESTAMP');
@@ -142,8 +187,8 @@ class Table {
 
   /**
    * Predefined updated at field
-   * @param $name: field name
-   * @return new Field() with predefined createdAt
+   * @param string name
+   * @return self
    */
   public function updatedAt ($name = 'updated_at') {
     return $this->addField($name, 'timestamp')->attribute('on update CURRENT_TIMESTAMP');
@@ -151,8 +196,8 @@ class Table {
 
   /**
    * Predefined is active field
-   * @param $name: field name
-   * @return new Field() with predefined createdAt
+   * @param string name
+   * @return self
    */
   public function isActive ($name = 'is_active') {
     return $this->addField($name, 'boolean')->default(1);
@@ -160,8 +205,8 @@ class Table {
 
   /**
    * Create a new primary key field
-   * @param $name: field name
-   * @return new Field()
+   * @param string name
+   * @return self
    */
   public function primary ($name = 'id') {
     $this->primaryKey = $name;
@@ -170,8 +215,8 @@ class Table {
 
   /**
    * Create a new index key field
-   * @param $name: field name
-   * @return new Field()
+   * @param string name
+   * @return self
    */
   public function index ($name) {
     return $this->addField($name, 'int')->index()->unsigned()->length(11);
@@ -179,8 +224,8 @@ class Table {
   
   /**
    * Create a new Field with type integer
-   * @param $name: field name
-   * @return new Field()
+   * @param string name
+   * @return self
    */
   public function int ($name) {
     return $this->addField($name, 'int');
@@ -188,8 +233,8 @@ class Table {
 
   /**
    * Create a new Field with type tiny int
-   * @param $name: field name
-   * @return new Field()
+   * @param string name
+   * @return self
    */
   public function tinyint ($name) {
     return $this->addField($name, 'tinyint');
@@ -197,8 +242,8 @@ class Table {
 
   /**
    * Create a new Field with type small int
-   * @param $name: field name
-   * @return new Field()
+   * @param string name
+   * @return self
    */
   public function smallint ($name) {
     return $this->addField($name, 'smallint');
@@ -206,8 +251,8 @@ class Table {
 
   /**
    * Create a new Field with type medium int
-   * @param $name: field name
-   * @return new Field()
+   * @param string name
+   * @return self
    */
   public function mediumint ($name) {
     return $this->addField($name, 'mediumint');
@@ -215,8 +260,8 @@ class Table {
 
   /**
    * Create a new Field with type big int
-   * @param $name: field name
-   * @return new Field()
+   * @param string name
+   * @return self
    */
   public function bigint ($name) {
     return $this->addField($name, 'bigint');
@@ -224,8 +269,8 @@ class Table {
 
   /**
    * Create a new Field with type decimal
-   * @param $name: field name
-   * @return new Field()
+   * @param string name
+   * @return self
    */
   public function decimal ($name) {
     return $this->addField($name, 'decimal');
@@ -233,8 +278,8 @@ class Table {
 
   /**
    * Create a new Field with type float
-   * @param $name: field name
-   * @return new Field()
+   * @param string name
+   * @return self
    */
   public function float ($name) {
     return $this->addField($name, 'float');
@@ -242,8 +287,8 @@ class Table {
 
   /**
    * Create a new Field with type double
-   * @param $name: field name
-   * @return new Field()
+   * @param string name
+   * @return self
    */
   public function double ($name) {
     return $this->addField($name, 'double');
@@ -251,8 +296,8 @@ class Table {
 
   /**
    * Create a new Field with type real
-   * @param $name: field name
-   * @return new Field()
+   * @param string name
+   * @return self
    */
   public function real ($name) {
     return $this->addField($name, 'real');
@@ -260,8 +305,8 @@ class Table {
 
   /**
    * Create a new Field with type bit
-   * @param $name: field name
-   * @return new Field()
+   * @param string name
+   * @return self
    */
   public function bit ($name) {
     return $this->addField($name, 'bit');
