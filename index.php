@@ -24,7 +24,7 @@ $posts = $app->table('posts', function ($table) {
   $table->isActive();
   $table->createdAt();
   $table->updatedAt();
-  $table->foreign('user_id', 'tbl_users', 'id');
+  $table->foreign('user_id', 'users', 'id');
 });
 
 if (isset($_GET['migrate'])) {

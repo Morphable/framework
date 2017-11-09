@@ -54,7 +54,12 @@ class Config {
   /**
    * @return self
    */
-  function __construct () {
+  function __construct ($config = null) {
+    if ($config != null) {
+      foreach ($config as $key => $val) {
+        $this->$key = $val;
+      }
+    }
     return $this;
   }
 

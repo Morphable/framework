@@ -3,14 +3,9 @@
 namespace Bootstrap;
 
 require __DIR__ . '/AutoLoad.php';
+require __DIR__ . '/config.php';
 
 use Morphable\Config;
 
-$config = new Config();
-$config->root = __DIR__ . '/';
-$config->env = 'dev';
-$config->url = 'localhost:8000';
-
-$config->setConnectionValue('dbName', 'test');
-$config->setConnectionValue('prefix', 'tbl_');
+$config = new Config($appConfig);
 

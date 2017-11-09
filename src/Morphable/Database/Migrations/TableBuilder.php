@@ -117,10 +117,6 @@ class TableBuilder {
   public static function create ($connection, $object) {
     if (!self::tableExists($connection, $object->table)) {
       $build = self::build($object);
-
-      echo $build;
-      echo PHP_EOL;
-
       $connection->query($build);
       return true;
     }
@@ -169,9 +165,6 @@ class TableBuilder {
    * @return string
    */
   public static function build (Table $table) {
-
-    var_dump($table->getFields()[0]);
-
     $sql = "";
     $sql .= "CREATE TABLE `{$table->getTable()}` (";
     $sql .= PHP_EOL;
