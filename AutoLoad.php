@@ -11,7 +11,7 @@ $autoloader = new Morphable\Autoloader;
 /**
  * Require Base
  */
-$autoloader->addFile('config.php');
+$autoloader->addFile($morphablePath . 'Config.php');
 $autoloader->addFile($databasePath . 'Connection.php');
 $autoloader->addFile($databasePath . 'Manager.php');
 

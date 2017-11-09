@@ -41,6 +41,11 @@ class Table {
   public $charset = "utf8";
 
   /**
+   * @var boolean
+   */
+  public $strict = true;
+
+  /**
    * @var array
    */
   public $foreigns = [];
@@ -62,9 +67,17 @@ class Table {
    * @param function callback 
    * @return $this if callback is not null
    */
-  function __construct ($connection, $table, $callback = null) {
+  function __construct ($connection, $table, $callback = null, $options = null) {
     $this->connection = $connection;
     $this->table = $table;
+
+    if ($options != null) {
+      $this->table = $options['prefix'] . $table;
+      $this->engine = $options['engine'];
+      $this->collation = $options['collation'];
+      $this->strict = $options['strict'];
+      $this->charset = $options['charset'];
+    }
 
     if ($callback != null) {
       $callback($this);

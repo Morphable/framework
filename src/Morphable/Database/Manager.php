@@ -30,7 +30,13 @@ class Manager {
   }
   
   public function table($name, $callback = null) {
-    return new Migrations\Table($this->getConnection(), $name, $callback);
+    return new Migrations\Table($this->getConnection(), $name, $callback, [
+      'engine' => $this->config['engine'],
+      'charset' => $this->config['charset'],
+      'collation' => $this->config['collation'],
+      'strict' => $this->config['strict'],
+      'prefix' => $this->config['prefix'],
+    ]);
   }
 
 }

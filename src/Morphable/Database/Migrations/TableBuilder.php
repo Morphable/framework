@@ -18,7 +18,7 @@ class TableBuilder {
    * @param array foreign
    * @return string
    */
-  public static function buildForeign ($foreign) {
+  public static function buildForeign ($foreign, $strict) {
     $index = $foreign[0];
     $foreignTbl= $foreign[1];
     $foreignKey = $foreign[2];
@@ -28,8 +28,13 @@ class TableBuilder {
     $sql .= "FOREIGN KEY ({$index})";
     $sql .= ' REFERENCES ';
     $sql .= "{$foreignTbl}({$foreignKey})";
-    $sql .= ' ON UPDATE CASCADE ';
-    $sql .= 'ON DELETE CASCADE ';
+    if ($strict) {
+      $sql .= ' ON UPDATE RESTRICT ';
+      $sql .= ' ON DELETE RESTRICT ';
+    } else {
+      $sql .= ' ON UPDATE CASCADE ';
+      $sql .= ' ON DELETE CASCADE ';
+    }
 
     return $sql;
   }
@@ -112,6 +117,10 @@ class TableBuilder {
   public static function create ($connection, $object) {
     if (!self::tableExists($connection, $object->table)) {
       $build = self::build($object);
+
+      echo $build;
+      echo PHP_EOL;
+
       $connection->query($build);
       return true;
     }
@@ -160,18 +169,22 @@ class TableBuilder {
    * @return string
    */
   public static function build (Table $table) {
+
+    var_dump($table->getFields()[0]);
+
     $sql = "";
     $sql .= "CREATE TABLE `{$table->getTable()}` (";
     $sql .= PHP_EOL;
 
     foreach ($table->getFields() as $field) {
+
       $sql .= self::buildField($field);
       $sql .= ',';
       $sql .= PHP_EOL;
     }
 
     foreach ($table->getForeignKeys() as $foreign) {
-      $sql .= self::buildForeign($foreign);
+      $sql .= self::buildForeign($foreign, $table->strict);
       $sql .= ",";
       $sql .= PHP_EOL;
     }

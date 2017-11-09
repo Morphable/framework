@@ -125,7 +125,7 @@ class Field {
    * @return self
    */
   public function unsigned () {
-    $this->isUnSigned = true;
+    $this->isUnsigned = true;
     return $this;
   }
 

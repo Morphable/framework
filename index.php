@@ -1,17 +1,13 @@
 <?php
 
-require_once 'init.php';
+require_once 'bootstrap.php';
 
 use Morphable\Database;
 use Morphable\Database\Migrations;
 
-$app = new Morphable\Database\Manager([
-  'host' => 'localhost',
-  'port' => 3306,
-  'user' => 'root',
-  'pass' => '',
-  'dbName' => 'test'
-]);
+$app = new Morphable\Database\Manager(
+  $config->connection
+);
 
 $users = $app->table('users', function ($table) {
   $table->primary('id');
@@ -28,7 +24,7 @@ $posts = $app->table('posts', function ($table) {
   $table->isActive();
   $table->createdAt();
   $table->updatedAt();
-  $table->foreign('user_id', 'users', 'id');
+  $table->foreign('user_id', 'tbl_users', 'id');
 });
 
 if (isset($_GET['migrate'])) {
