@@ -56,19 +56,12 @@ class Table {
   public $primaryKey;
 
   /**
-   * @var object
-   */
-  private $connection;
-
-  /**
    * Constructor
-   * @param object connection
    * @param string table
    * @param function callback 
    * @return $this if callback is not null
    */
-  function __construct ($connection, $table, $callback = null, $options = null) {
-    $this->connection = $connection;
+  function __construct ($table, $callback = null, $options = null) {
     $this->table = $table;
 
     if ($options != null) {
@@ -89,7 +82,7 @@ class Table {
    * @return function
    */
   public function drop () {
-    return TableBuilder::drop($this->connection, $this->table);
+    return TableBuilder::drop($this->table);
   }
 
   /**
@@ -98,7 +91,7 @@ class Table {
    * @return function
    */
   public function dropForeignKey ($constraint) {
-    return TableBuilder::dropForeignKey($this->connection, $this->table, $constraint);
+    return TableBuilder::dropForeignKey($this->table, $constraint);
   }
   
   /**
@@ -106,7 +99,7 @@ class Table {
    * @return function
    */
   public function create () {
-    return TableBuilder::create($this->connection, $this);
+    return TableBuilder::create($this);
   } 
 
   /**

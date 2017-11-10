@@ -2,6 +2,8 @@
 
 namespace Morphable\Database\Migrations;
 
+use Morphable\Database\Connection;
+
 class TableBuilder {
 
   /**
@@ -69,9 +71,9 @@ class TableBuilder {
    * @param string table
    * @return boolean
    */
-  public static function tableExists ($connection, $table) {
+  public static function tableExists ($table) {
     $sql = "SHOW TABLES LIKE '{$table}'";
-    $stmt = $connection->query($sql);
+    $stmt = Connection::query($sql);
     $count = $stmt->rowCount();
 
     if ($count > 0) {
@@ -88,8 +90,8 @@ class TableBuilder {
    * @param string constraint
    * @return boolean
    */
-  public static function foreignKeyExists ($connection, $table, $constraint) {
-    $dbName = $connection->query('SELECT database()')->fetchColumn();
+  public static function foreignKeyExists ($table, $constraint) {
+    $dbName = Connection::query('SELECT database()')->fetchColumn();
 
     $sql = "
     SELECT * FROM information_schema.TABLE_CONSTRAINTS 
@@ -97,8 +99,7 @@ class TableBuilder {
     AND information_schema.TABLE_CONSTRAINTS.TABLE_SCHEMA = '{$dbName}'
     AND information_schema.TABLE_CONSTRAINTS.TABLE_NAME = '{$table}' ";
 
-    $stmt = $connection->query($sql);
-    $result = $stmt->fetchAll();
+    $result = Connection::query($sql);
 
     foreach($result as $column) {
       if ($column['CONSTRAINT_NAME'] == $constraint) {
@@ -114,10 +115,10 @@ class TableBuilder {
    * @param object object
    * @return boolean
    */
-  public static function create ($connection, $object) {
-    if (!self::tableExists($connection, $object->table)) {
+  public static function create ($object) {
+    if (!self::tableExists($object->table)) {
       $build = self::build($object);
-      $connection->query($build);
+      Connection::query($build);
       return true;
     }
 
@@ -130,11 +131,9 @@ class TableBuilder {
    * @param string table
    * @return boolean
    */
-  public static function drop ($connection, $table) {
-    if (self::tableExists($connection, $table)) {
-      $connection->query("
-        DROP TABLE {$table}
-      ");
+  public static function drop ($table) {
+    if (self::tableExists($table)) {
+      Connection::query("DROP TABLE {$table}");
       return true;
     }
 
@@ -147,11 +146,10 @@ class TableBuilder {
    * @param string table
    * @param string constraint
    */
-  public static function dropForeignKey ($connection, $table, $constraint) {
-    if (self::tableExists($connection, $table)) {
-      if (self::foreignKeyExists($connection, $table, $constraint)) {
-        $sql = "ALTER TABLE {$table} DROP FOREIGN KEY {$constraint}";
-        $connection->query($sql);
+  public static function dropForeignKey ($table, $constraint) {
+    if (self::tableExists($table)) {
+      if (self::foreignKeyExists($table, $constraint)) {
+        Connection::query("ALTER TABLE {$table} DROP FOREIGN KEY {$constraint}");
         return true;
       }
       return false;

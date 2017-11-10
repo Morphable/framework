@@ -132,6 +132,15 @@ class Connection {
   }
 
   /**
+   * Execute a query
+   * @param string
+   * @return object
+   */
+  public static function query ($sql) {
+    return self::$pdo->query($sql);
+  }
+
+  /**
    * Execute update query
    * @param string sql
    * @param array params
