@@ -5,9 +5,25 @@ require_once 'bootstrap.php';
 use Morphable\Database;
 use Morphable\Database\Migrations;
 
-$connection = Database\Connection::staticInstance($config->connection);
+$sql = '
+  INSERT INTO users
+  (`name`)
+  VALUES
+  (:name)
+';
 
-$app = new Morphable\Database\Manager($connection, $config->connection);
+$params = ['name' => 'test'];
+
+$s = 'SELECT * FROM users';
+
+$fetch = Database\Connection::insert($sql, $params);
+var_dump($fetch);
+
+// $exec = Database\Connection::prepare($sql, $params);
+
+// var_dump($exec);
+
+$app = new Database\Manager($connection, $config->connection);
 
 $users = $app->table('users', function ($table) {
   $table->primary('id');
