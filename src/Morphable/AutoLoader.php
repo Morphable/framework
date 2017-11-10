@@ -6,7 +6,7 @@ class AutoLoader {
 
   private $files = [];
 
-  function __constructor () {
+  function __construct () {
     spl_autoload_register([$this, '__autoload']);
   }
 

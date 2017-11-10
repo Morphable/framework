@@ -1,4 +1,5 @@
 <?php
+
 $rootPath = __DIR__ . '/';
 $morphablePath = $rootPath . 'src/Morphable/';
 $databasePath = $morphablePath . 'Database/';
@@ -29,4 +30,7 @@ $autoloader->addFile($migrationsPath . 'TableBuilder.php');
 $autoloader->addFile($consolePath . 'Console.php');
 $autoloader->addFile($consolePath . 'Command.php');
 
+/**
+ * Execute
+ */
 $autoloader->autoload();
