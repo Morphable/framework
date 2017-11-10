@@ -1,4 +1,5 @@
 <?php
 
-require_once 'Examples/bootstrap.php';
-require_once 'Examples/migration.php';
+require 'Examples/bootstrap.php';
+require 'Examples/migration.php';
+require 'Examples/query.php';

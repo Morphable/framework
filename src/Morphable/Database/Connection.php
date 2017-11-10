@@ -150,6 +150,7 @@ class Connection {
     $stmt = self::$pdo->prepare($sql);
     self::bind($stmt, $params);
     $stmt->execute();
+
     return true;
   }
 
@@ -163,6 +164,7 @@ class Connection {
     $stmt = self::$pdo->prepare($sql);
     self::bind($stmt, $params);
     $stmt->execute();
+
     return true;
   }
 
@@ -175,8 +177,13 @@ class Connection {
   public static function select ($sql, $class = null) {
     $stmt = self::$pdo->prepare($sql);
     $stmt->execute();
-
     return self::fetch($stmt, $class);
+  }
+
+  public static function delete ($sql) {
+    $stmt = self::$pdo->prepare($sql);
+    $stmt->execute();
+    return true;
   }
 
   /**
@@ -196,28 +203,6 @@ class Connection {
   }
 
   /**
-   * Switch bind type
-   * @param string
-   * @return object
-   */
-  private static function getBindType ($param) {
-    switch (gettype($param)) {
-      case 'integer':
-        return PDO::PARAM_INT;
-        break;
-      case 'string':
-        return PDO::PARAM_STR;
-        break;
-      case 'boolean':
-        return PDO::PARAM_BOOL;
-        break;
-      default:
-        throw new Exception('no type');
-        break;
-    }
-  } 
-
-  /**
    * Bind parameter
    * @param object prepare
    * @param array params
@@ -225,7 +210,7 @@ class Connection {
    */
   private static function bind ($prepare, $params) {
     foreach($params as $key => $val) {
-      $prepare->bindParam(":$key", $val, self::getBindType($val));
+      $prepare->bindValue(":$key", $val);
     }
   }
 

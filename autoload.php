@@ -29,6 +29,7 @@ $autoloader->addFile($migrationsPath . 'TableBuilder.php');
  */
 $queryPath = $databasePath . 'Query/';
 $autoloader->addFile($queryPath . 'Query.php');
+$autoloader->addFile($queryPath . 'QueryBuilder.php');
 
 /**
  * Require Console
