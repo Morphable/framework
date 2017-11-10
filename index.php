@@ -4,24 +4,7 @@ require_once 'bootstrap.php';
 
 use Morphable\Database;
 use Morphable\Database\Migrations;
-
-$sql = '
-  INSERT INTO users
-  (`name`)
-  VALUES
-  (:name)
-';
-
-$params = ['name' => 'test'];
-
-$s = 'SELECT * FROM users';
-
-$fetch = Database\Connection::insert($sql, $params);
-var_dump($fetch);
-
-// $exec = Database\Connection::prepare($sql, $params);
-
-// var_dump($exec);
+use Database\Connection;
 
 $app = new Database\Manager($connection, $config->connection);
 
