@@ -204,7 +204,7 @@ class Table {
    * @return self
    */
   public function updatedAt ($name = 'updated_at') {
-    return $this->addField($name, 'timestamp')->attribute('on update CURRENT_TIMESTAMP');
+    return $this->addField($name, 'timestamp')->default('CURRENT_TIMESTAMP')->attribute('on update CURRENT_TIMESTAMP');
   }
 
   /**

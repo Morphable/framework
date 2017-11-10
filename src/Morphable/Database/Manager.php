@@ -9,28 +9,22 @@ class Manager {
    */
   public $config;
 
+  /**
+   * @var object
+   */
+  public $connection;
+
   // private $connection;
 
-  function __construct (Array $config = null) {
+  function __construct ($connection, Array $config = null) {
+    $this->connection = $connection;
     if ($config != null) {
       $this->config = $config;
     }
   }
-
-  public function connection ($config) {
-    return Connection::staticInstance($config);
-  }
-
-  public function getConnection ($config = null) {
-    if ($config == null) {
-      return $this->connection($this->config);
-    } else {
-      return $this->connection($config);
-    }
-  }
   
   public function table($name, $callback = null) {
-    return new Migrations\Table($this->getConnection(), $name, $callback, [
+    return new Migrations\Table($this->connection, $name, $callback, [
       'engine' => $this->config['engine'],
       'charset' => $this->config['charset'],
       'collation' => $this->config['collation'],

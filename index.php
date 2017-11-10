@@ -5,9 +5,9 @@ require_once 'bootstrap.php';
 use Morphable\Database;
 use Morphable\Database\Migrations;
 
-$app = new Morphable\Database\Manager(
-  $config->connection
-);
+$connection = Database\Connection::staticInstance($config->connection);
+
+$app = new Morphable\Database\Manager($connection, $config->connection);
 
 $users = $app->table('users', function ($table) {
   $table->primary('id');
