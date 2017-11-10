@@ -7,26 +7,54 @@ class Manager {
   /**
    * @var array
    */
-  public $config;
+  static $config;
 
   function __construct (Array $config = null) {
     if ($config != null) {
-      $this->config = $config;
+      self::$config = $config;
     }
   }
 
-  public function query () {
-    return new Query\Query($this->connection);
+  public static function Schema ($name, $callback = null) {
+    return new Migrations\Schema($name, $callback, [
+      'engine' => self::$config['engine'],
+      'charset' => self::$config['charset'],
+      'collation' => self::$config['collation'],
+      'strict' => self::$config['strict'],
+      'prefix' => self::$config['prefix'],
+    ]);
   }
   
-  public function table($name, $callback = null) {
-    return new Migrations\Table($name, $callback, [
-      'engine' => $this->config['engine'],
-      'charset' => $this->config['charset'],
-      'collation' => $this->config['collation'],
-      'strict' => $this->config['strict'],
-      'prefix' => $this->config['prefix'],
-    ]);
+  public static function Table ($name) {
+    return new Query\Query($name);
+  }
+
+  public static function select ($query) {
+    return Connection::select($query);
+  }
+
+  public static function insert ($query, $params) {
+    return Connection::insert($query, $params);
+  }
+
+  public static function update ($query, $params) {
+    return Connection::update($query, $params);
+  }
+
+  public static function AddForeignKey ($tbl1, $field1, $tbl2, $field2) {
+    return Migrations\TableBuilder::addForeignKey($tbl1, $field1, $tbl2, $field2);
+  }
+
+  public static function DropForeignKey ($table, $constraint) {
+    return Migrations\TableBuilder::dropForeignKey($table, $constraint);
+  }
+
+  public static function DropIfExists($table) {
+    return Migrations\TableBuilder::drop($table);
+  }
+
+  public static function CreateTable($table) {
+    return Migrations\TableBuilder::create($table);
   }
 
 }

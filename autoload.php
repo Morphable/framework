@@ -20,9 +20,15 @@ $autoloader->addFile($databasePath . 'Manager.php');
  * Require Migrations
  */
 $migrationsPath = $databasePath . 'Migrations/';
-$autoloader->addFile($migrationsPath . 'Table.php');
+$autoloader->addFile($migrationsPath . 'Schema.php');
 $autoloader->addFile($migrationsPath . 'Field.php');
 $autoloader->addFile($migrationsPath . 'TableBuilder.php');
+
+/**
+ * Require Query
+ */
+$queryPath = $databasePath . 'Query/';
+$autoloader->addFile($queryPath . 'Query.php');
 
 /**
  * Require Console

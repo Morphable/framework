@@ -20,7 +20,7 @@ class TableBuilder {
    * @param array foreign
    * @return string
    */
-  public static function buildForeign ($foreign, $strict) {
+  public static function buildForeign ($foreign, $strict = true) {
     $index = $foreign[0];
     $foreignTbl= $foreign[1];
     $foreignKey = $foreign[2];
@@ -125,6 +125,16 @@ class TableBuilder {
     return false;
   }
 
+  public static function addForeignKey ($tbl1, $field1, $tbl2, $field2) {
+    if (!self::foreignKeyExists($tbl1, 'foreign_' . $field1 . '_' . $tbl2 . '_' . $field2)) {
+      $foreign = self::buildForeign([$field1, $tbl2, $field2]);
+      $query = "ALTER TABLE $tbl1 ADD $foreign";
+      Connection::query($query);
+      return true;
+    }
+    return false;
+  }
+
   /**
    * Execute a drop table query
    * @param object connection
@@ -162,7 +172,7 @@ class TableBuilder {
    * @param object table
    * @return string
    */
-  public static function build (Table $table) {
+  public static function build (Schema $table) {
     $sql = "";
     $sql .= "CREATE TABLE `{$table->getTable()}` (";
     $sql .= PHP_EOL;

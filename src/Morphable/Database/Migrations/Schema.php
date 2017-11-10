@@ -3,7 +3,7 @@
 namespace Morphable\Database\Migrations;
 use Morphable\Database;
 
-class Table {
+class Schema {
 
   /**
    * @var array
@@ -75,6 +75,8 @@ class Table {
     if ($callback != null) {
       $callback($this);
     }
+
+    return $this;
   }
 
   /**
