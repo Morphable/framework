@@ -110,7 +110,7 @@ class Connection {
   /**
    * Create static instance
    * @param array
-   * @return object
+   * @return void
    */
   static function staticInstance ($db) {
     try {
@@ -118,7 +118,6 @@ class Connection {
       $pdo = new PDO("mysql:host={$db['host']};port={$db['port']};dbname={$db['dbName']}", $db['user'], $db['pass']);
       $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       self::$pdo = $pdo;
-      return $pdo;
     } catch (PDOException $e) {
       echo 'Connection failed: ' . $e->getMessage();
     }
@@ -128,7 +127,7 @@ class Connection {
    * Get last inserted id
    * @return integer
    */
-  static function lastInsertedId () {
+  public static function lastInsertedId () {
     return self::$pdo->lastInsertId();
   }
 
@@ -138,7 +137,7 @@ class Connection {
    * @param array params
    * @return boolean
    */
-  static function update ($sql, $params) {
+  public static function update ($sql, $params) {
     $stmt = self::$pdo->prepare($sql);
     self::bind($stmt, $params);
     $stmt->execute();
@@ -151,7 +150,7 @@ class Connection {
    * @param array params
    * @return boolean
    */
-  static function insert ($sql, $params) {
+  public static function insert ($sql, $params) {
     $stmt = self::$pdo->prepare($sql);
     self::bind($stmt, $params);
     $stmt->execute();
@@ -164,7 +163,7 @@ class Connection {
    * @param string class
    * @return array
    */
-  static function select ($sql, $class = null) {
+  public static function select ($sql, $class = null) {
     $stmt = self::$pdo->prepare($sql);
     $stmt->execute();
 
@@ -177,7 +176,7 @@ class Connection {
    * @param string class
    * @return array
    */
-  static function fetch ($stmt, $class = null) {
+  private static function fetch ($stmt, $class = null) {
     if ($class != null) {
       $stmt->setFetchMode(PDO::FETCH_CLASS, $class);
     } else {
@@ -192,7 +191,7 @@ class Connection {
    * @param string
    * @return object
    */
-  static function getBindType ($param) {
+  private static function getBindType ($param) {
     switch (gettype($param)) {
       case 'integer':
         return PDO::PARAM_INT;
@@ -215,7 +214,7 @@ class Connection {
    * @param array params
    * @return void
    */
-  static function bind ($prepare, $params) {
+  private static function bind ($prepare, $params) {
     foreach($params as $key => $val) {
       $prepare->bindParam(":$key", $val, self::getBindType($val));
     }
