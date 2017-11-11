@@ -73,8 +73,7 @@ class TableBuilder {
    */
   public static function tableExists ($table) {
     $sql = "SHOW TABLES LIKE '{$table}'";
-    $stmt = Connection::query($sql);
-    $count = $stmt->rowCount();
+    $count = Connection::count($sql);
 
     if ($count > 0) {
       return true;
@@ -91,7 +90,7 @@ class TableBuilder {
    * @return boolean
    */
   public static function foreignKeyExists ($table, $constraint) {
-    $dbName = Connection::query('SELECT database()')->fetchColumn();
+    $dbName = Connection::queryStmt('SELECT database()')->fetchColumn();
 
     $sql = "
     SELECT * FROM information_schema.TABLE_CONSTRAINTS 
@@ -99,7 +98,7 @@ class TableBuilder {
     AND information_schema.TABLE_CONSTRAINTS.TABLE_SCHEMA = '{$dbName}'
     AND information_schema.TABLE_CONSTRAINTS.TABLE_NAME = '{$table}' ";
 
-    $result = Connection::query($sql);
+    $result = Connection::select($sql);
 
     foreach($result as $column) {
       if ($column['CONSTRAINT_NAME'] == $constraint) {

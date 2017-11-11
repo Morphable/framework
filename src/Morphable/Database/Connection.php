@@ -131,6 +131,19 @@ class Connection {
     return self::$pdo->lastInsertId();
   }
 
+  public static function queryStmt ($sql, $params = []) {
+    $stmt = self::$pdo->prepare($sql);
+    $stmt->execute($params);
+
+    return $stmt;
+  }
+
+  public static function count ($sql, $params = []) {
+    $stmt = self::$pdo->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->rowCount();
+  }
+
   /**
    * Execute a query
    * @param string

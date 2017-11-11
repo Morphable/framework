@@ -29,8 +29,12 @@ class Manager {
     return new Query\Query($name);
   }
 
-  public static function select ($query) {
-    return Connection::select($query);
+  public static function query ($query, $params) {
+    return Connection::select($query, $params);
+  }
+
+  public static function select ($query, $params) {
+    return Connection::select($query, $params);
   }
 
   public static function insert ($query, $params) {
