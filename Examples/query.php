@@ -24,7 +24,7 @@ if (isset($_GET['query'])) {
 
   if ($query == 'select') {
     $r = Manager::table('users')
-      ->whereIn('id', [1, 2, 3])
+      ->whereIn('id', [9, 10, 11])
       ->orderBy('created_at')
       ->select('id, name, email')
       ->exec();

@@ -11,7 +11,19 @@ class QueryBuilder {
     $compare = $where[1];
     $value = $where[2];
 
-    return "WHERE $column $compare $value";
+    if (is_array($value)) {
+      $sql = "WHERE $column $compare (";
+      foreach($value as $bind) {
+        $sql .= "?, ";
+      }
+      $sql = substr($sql, 0, -2);
+      $sql .= ")";
+
+      return $sql;
+    } else {
+      return "WHERE $column $compare ?";
+    }
+
   }
 
   public static function buildJoin ($type, $table, $join) {
@@ -41,17 +53,22 @@ class QueryBuilder {
     $query .= "UPDATE `$object->table` SET" . " ";
 
     foreach ($object->fields as $key => $value) {
-      $query .= "`$key` = :$key, ";
+      $query .= "`$key` = ?, ";
+      $object->addBind($value);
     }
 
     $query = substr($query, 0, -2);
 
     if ($object->where) {
-      $query .= " ";
-      $query .= self::buildWhere($object->where);
+      $query .= " " . self::buildWhere($object->where) . " ";
+      if (is_array($object->where[2])) {
+        foreach ($object->where[2] as $bind) {
+          $object->addBind($bind);
+        }
+      } else {
+        $object->addBind($object->where[2]);
+      }
     }
-
-    echo $query;
 
     return $query;
   }
@@ -69,7 +86,8 @@ class QueryBuilder {
     $query .= ") VALUES (";
 
     foreach ($object->fields as $key => $value) {
-      $query .= ":$key, ";
+      $query .= "?, ";
+      $object->addBind($value);
     }
 
     $query = substr($query, 0, -2);
@@ -82,8 +100,16 @@ class QueryBuilder {
   public static function buildDelete ($object) {
     $query = "";
     $query .= "DELETE FROM `$object->table` ";
+    
     if ($object->where) {
-      $query .= self::buildWhere($object->where);
+      $query .= " " . self::buildWhere($object->where) . " ";
+      if (is_array($object->where[2])) {
+        foreach ($object->where[2] as $bind) {
+          $object->addBind($bind);
+        }
+      } else {
+        $object->addBind($object->where[2]);
+      }
     }
 
     return $query;
@@ -92,8 +118,16 @@ class QueryBuilder {
   public static function buildSelect ($object) {
     $query = "";
     $query .= "SELECT $object->select FROM `$object->table`" . " ";
+
     if ($object->where) {
       $query .= self::buildWhere($object->where) . " ";
+      if (is_array($object->where[2])) {
+        foreach ($object->where[2] as $bind) {
+          $object->addBind($bind);
+        }
+      } else {
+        $object->addBind($object->where[2]);
+      }
     }
 
     if ($object->orderBy) {
@@ -125,23 +159,22 @@ class QueryBuilder {
 
   public static function execInsert ($object) {
     $query = self::buildInsert($object);
-    echo $query;
     return Connection::insert($query, $object->fields);
   }
 
   public static function execUpdate ($object) {
     $query = self::buildUpdate($object);
-    return Connection::update($query, $object->fields);
+    return Connection::update($query, $object->binds);
   }
 
   public static function execSelect ($object) {
     $query = self::buildSelect($object);
-    return Connection::select($query);
+    return Connection::select($query, $object->binds);
   }
 
   public static function execDelete ($object) {
     $query = self::buildDelete($object);
-    return Connection::delete($query);
+    return Connection::delete($query, $object->binds);
   }
 
 }

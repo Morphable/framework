@@ -17,6 +17,8 @@ class Query {
   public $select;
   public $fields;
 
+  public $binds = [];
+
   public $joins = [
     'inner' => [],
     'outer' => [],
@@ -31,6 +33,11 @@ class Query {
       $this->table = $table;
     }
 
+    return $this;
+  }
+
+  public function addBind ($bind) {
+    $this->binds[] = $bind;
     return $this;
   }
 
@@ -90,7 +97,7 @@ class Query {
     $valueString = substr($valueString, 0, -2);
     $valueString .= ")";
 
-    $this->where = [$column, 'IN', $valueString];
+    $this->where = [$column, 'IN', $values];
 
     return $this;
   }

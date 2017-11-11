@@ -136,8 +136,10 @@ class Connection {
    * @param string
    * @return object
    */
-  public static function query ($sql) {
-    return self::$pdo->query($sql);
+  public static function query ($sql, $params = []) {
+    $stmt = self::$pdo->prepare($sql);
+    $stmt->execute($params);
+    return true;
   }
 
   /**
@@ -148,8 +150,8 @@ class Connection {
    */
   public static function update ($sql, $params) {
     $stmt = self::$pdo->prepare($sql);
-    self::bind($stmt, $params);
-    $stmt->execute();
+    // self::bind($stmt, $params);
+    $stmt->execute($params);
 
     return true;
   }
@@ -162,8 +164,8 @@ class Connection {
    */
   public static function insert ($sql, $params) {
     $stmt = self::$pdo->prepare($sql);
-    self::bind($stmt, $params);
-    $stmt->execute();
+    // self::bind($stmt, $params);
+    $stmt->execute($params);
 
     return true;
   }
@@ -174,15 +176,15 @@ class Connection {
    * @param string class
    * @return array
    */
-  public static function select ($sql, $class = null) {
+  public static function select ($sql, $params = [], $class = null) {
     $stmt = self::$pdo->prepare($sql);
-    $stmt->execute();
+    $stmt->execute($params);
     return self::fetch($stmt, $class);
   }
 
-  public static function delete ($sql) {
+  public static function delete ($sql, $params = []) {
     $stmt = self::$pdo->prepare($sql);
-    $stmt->execute();
+    $stmt->execute($params);
     return true;
   }
 
