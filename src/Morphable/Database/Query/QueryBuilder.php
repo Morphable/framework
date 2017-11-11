@@ -228,7 +228,6 @@ class QueryBuilder {
    */
   public static function execSelect ($object) {
     $query = self::buildSelect($object);
-    echo $query;
     return Connection::select($query, $object->binds);
   }
 
