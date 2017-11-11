@@ -6,6 +6,11 @@ use Morphable\Database\Connection;
 
 class QueryBuilder {
  
+  /**
+   * Build a where query
+   * @param array
+   * @return string
+   */
   public static function buildWhere ($where) {
     $column = $where[0];
     $compare = $where[1];
@@ -26,6 +31,13 @@ class QueryBuilder {
 
   }
 
+  /**
+   * Build an inner join query
+   * @param string type
+   * @param string table
+   * @param array join
+   * @return string
+   */
   public static function buildJoin ($type, $table, $join) {
     $foreignTable = $join[0];
     $foreignColumn = $join[1];
@@ -36,6 +48,11 @@ class QueryBuilder {
     return "$type JOIN `$foreignTable` on $table.$value = $foreignTable.$foreignColumn";
   }
 
+  /**
+   * Build an order by query
+   * @param array
+   * @return string
+   */
   public static function buildOrderBy ($value) {
     $column = $value[0];
     $order = $value[1];
@@ -43,6 +60,11 @@ class QueryBuilder {
     return "order by $column $order";
   }
 
+  /**
+   * Build a group by query
+   * @param array
+   * @return string
+   */
   public static function buildGroupBy ($value) {
     $column = $value[0];
     $order = $value[1];
@@ -50,6 +72,11 @@ class QueryBuilder {
     return "group by $column $order";
   }
 
+  /**
+   * Build an update query
+   * @param object
+   * @return string
+   */
   public static function buildUpdate ($object) {
     $query = "";
     $query .= "UPDATE `$object->table` SET" . " ";
@@ -75,6 +102,11 @@ class QueryBuilder {
     return $query;
   }
 
+  /**
+   * Build an insert query
+   * @param object
+   * @return string
+   */
   public static function buildInsert ($object) {
     $query = "";
     $query .= "INSERT INTO `$object->table` (";
@@ -99,6 +131,11 @@ class QueryBuilder {
     return $query;
   }
 
+  /**
+   * Build a delete query
+   * @param object
+   * @return string
+   */
   public static function buildDelete ($object) {
     $query = "";
     $query .= "DELETE FROM `$object->table` ";
@@ -117,6 +154,11 @@ class QueryBuilder {
     return $query;
   }
 
+  /**
+   * Build a select query
+   * @param object
+   * @return string
+   */
   public static function buildSelect ($object) {
     $query = "";
     $query .= "SELECT $object->select FROM `$object->table`" . " ";
@@ -159,22 +201,42 @@ class QueryBuilder {
     return $query;
   }
 
+  /**
+   * Execute an insert query
+   * @param object
+   * @return method
+   */
   public static function execInsert ($object) {
     $query = self::buildInsert($object);
     return Connection::insert($query, $object->binds);
   }
 
+  /**
+   * Execute an update query
+   * @param object
+   * @return method
+   */
   public static function execUpdate ($object) {
     $query = self::buildUpdate($object);
     return Connection::update($query, $object->binds);
   }
 
+  /**
+   * Execute a select query
+   * @param object
+   * @return method
+   */
   public static function execSelect ($object) {
     $query = self::buildSelect($object);
     echo $query;
     return Connection::select($query, $object->binds);
   }
 
+  /**
+   * Execute a delete query
+   * @param object
+   * @return method
+   */
   public static function execDelete ($object) {
     $query = self::buildDelete($object);
     return Connection::delete($query, $object->binds);
