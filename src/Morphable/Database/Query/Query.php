@@ -90,13 +90,6 @@ class Query {
   }
 
   public function whereIn ($column, $values) {
-    $valueString = "(";
-    foreach ($values as $value) {
-      $valueString .= "'$value', ";
-    }
-    $valueString = substr($valueString, 0, -2);
-    $valueString .= ")";
-
     $this->where = [$column, 'IN', $values];
 
     return $this;

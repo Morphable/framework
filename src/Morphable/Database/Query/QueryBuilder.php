@@ -31,7 +31,9 @@ class QueryBuilder {
     $foreignColumn = $join[1];
     $value = $join[2];
 
-    return "$type JOIN `$foreignTable` on $foreignTable.$foreignColumn = $table.$value";
+    $type = strtoupper($type);
+
+    return "$type JOIN `$foreignTable` on $table.$value = $foreignTable.$foreignColumn";
   }
 
   public static function buildOrderBy ($value) {
@@ -119,6 +121,22 @@ class QueryBuilder {
     $query = "";
     $query .= "SELECT $object->select FROM `$object->table`" . " ";
 
+    foreach ($object->joins['inner'] as $inner) {
+      $query .= self::buildJoin('inner', $object->table, $inner) . " ";
+    }
+
+    foreach ($object->joins['outer'] as $inner) {
+      $query .= self::buildJoin('outer', $object->table, $inner) . " ";
+    }
+
+    foreach ($object->joins['left'] as $inner) {
+      $query .= self::buildJoin('left', $object->table, $inner) . " ";
+    }
+
+    foreach ($object->joins['right'] as $inner) {
+      $query .= self::buildJoin('right', $object->table, $inner) . " ";
+    }
+
     if ($object->where) {
       $query .= self::buildWhere($object->where) . " ";
       if (is_array($object->where[2])) {
@@ -138,22 +156,6 @@ class QueryBuilder {
       $query .= self::buildGroupBy($object->groupBy) . " ";
     }
     
-    foreach ($object->joins['inner'] as $inner) {
-      $query .= self::buildJoin('inner', $object->table, $inner) . " ";
-    }
-
-    foreach ($object->joins['outer'] as $inner) {
-      $query .= self::buildJoin('outer', $object->table, $inner) . " ";
-    }
-
-    foreach ($object->joins['left'] as $inner) {
-      $query .= self::buildJoin('left', $object->table, $inner) . " ";
-    }
-
-    foreach ($object->joins['right'] as $inner) {
-      $query .= self::buildJoin('right', $object->table, $inner) . " ";
-    }
-    
     return $query;
   }
 
@@ -169,6 +171,7 @@ class QueryBuilder {
 
   public static function execSelect ($object) {
     $query = self::buildSelect($object);
+    echo $query;
     return Connection::select($query, $object->binds);
   }
 
