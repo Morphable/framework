@@ -199,6 +199,16 @@ class Query {
     return $this;
   }
 
+  public function count () {
+    $this->type = 'select';
+
+    if (!$this->select) {
+      $this->select = "*";
+    }
+    
+    return QueryBuilder::execCount($this);
+  }
+
   /**
    * Set type insert
    * @param string fields

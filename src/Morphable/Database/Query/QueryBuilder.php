@@ -201,6 +201,11 @@ class QueryBuilder {
     return $query;
   }
 
+  public static function execCount ($object) {
+    $query = self::buildSelect($object);
+    return Connection::count($query, $object->binds);
+  }
+
   /**
    * Execute an insert query
    * @param object
