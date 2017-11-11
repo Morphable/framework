@@ -18,7 +18,7 @@ if (isset($_GET['query'])) {
       ->update([
         'name' => 'is just updated this name another time'
       ])
-      ->where('id', 3)
+      ->whereIn('id', [9, 10, 11])
       ->exec();
   }
 
@@ -33,13 +33,15 @@ if (isset($_GET['query'])) {
   }
 
   if ($query == 'insert') {
-    Manager::table('users')
+    $r = Manager::table('users')
       ->insert([
         'role_id' => '1',
         'name' => 'hooi',
         'email' => 'hoooi@mail',
         'password' => 'pass'
       ])->exec();
+
+    echo $r;
   }
 
 

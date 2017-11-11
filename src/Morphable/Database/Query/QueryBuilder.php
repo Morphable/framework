@@ -159,7 +159,7 @@ class QueryBuilder {
 
   public static function execInsert ($object) {
     $query = self::buildInsert($object);
-    return Connection::insert($query, $object->fields);
+    return Connection::insert($query, $object->binds);
   }
 
   public static function execUpdate ($object) {

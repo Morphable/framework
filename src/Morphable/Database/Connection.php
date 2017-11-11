@@ -164,10 +164,9 @@ class Connection {
    */
   public static function insert ($sql, $params) {
     $stmt = self::$pdo->prepare($sql);
-    // self::bind($stmt, $params);
     $stmt->execute($params);
 
-    return true;
+    return self::lastInsertedId();
   }
 
   /**
