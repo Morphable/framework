@@ -199,6 +199,10 @@ class Query {
     return $this;
   }
 
+  /**
+   * Get row count
+   * @return method
+   */
   public function count () {
     $this->type = 'select';
 

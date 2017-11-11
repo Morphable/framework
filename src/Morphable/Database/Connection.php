@@ -131,6 +131,12 @@ class Connection {
     return self::$pdo->lastInsertId();
   }
 
+  /**
+   * Execute query and return pdo
+   * @param string sql
+   * @param array params
+   * @return object
+   */
   public static function queryStmt ($sql, $params = []) {
     $stmt = self::$pdo->prepare($sql);
     $stmt->execute($params);
@@ -138,6 +144,12 @@ class Connection {
     return $stmt;
   }
 
+  /**
+   * Get row count
+   * @param string sql
+   * @param array params
+   * @return integer
+   */
   public static function count ($sql, $params = []) {
     $stmt = self::$pdo->prepare($sql);
     $stmt->execute($params);
@@ -194,6 +206,12 @@ class Connection {
     return self::fetch($stmt, $class);
   }
 
+  /**
+   * Execute delete query
+   * @param string sql
+   * @param array params
+   * @return boolean
+   */
   public static function delete ($sql, $params = []) {
     $stmt = self::$pdo->prepare($sql);
     $stmt->execute($params);

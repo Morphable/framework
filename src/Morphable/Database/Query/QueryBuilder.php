@@ -201,6 +201,11 @@ class QueryBuilder {
     return $query;
   }
 
+  /**
+   * Execute row count
+   * @param object
+   * @return method
+   */
   public static function execCount ($object) {
     $query = self::buildSelect($object);
     return Connection::count($query, $object->binds);
