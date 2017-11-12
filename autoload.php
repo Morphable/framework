@@ -13,7 +13,7 @@ $autoloader = new Morphable\Autoloader;
  * Require Exceptions
  */
 $autoloader->addFolder($morphablePath . 'Exceptions');
-$autoloader->addFile($morphablePath . 'Helpers.php');
+$autoloader->addFile($morphablePath . 'Helper.php');
 
 /**
  * Require Base

@@ -3,21 +3,22 @@
 use Morphable\Routing\Router;
 use Morphable\Routing\RouteBuilder;
 
+$url = $_SERVER['REQUEST_URI'];
+$route = '/user/:userId/?optional/post/:postId/';
+
+$split = RouteBuilder::splitAndBuildParams($url, $route);
+
+$compare = RouteBuilder::compareRoute($split['url'], $split['route']);
+
+
 
 ?>
 
 <pre>
-
-<?= 
-var_dump(RouteBuilder::buildParams($_SERVER['REQUEST_URI'], '/user/:userId/post/:postId/'));
-
-?>
-
+  <?= var_dump($split); ?>
 </pre>
 
 <?php
-
-
 
 
 die;
