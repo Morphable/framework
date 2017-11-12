@@ -24,11 +24,12 @@ if (isset($_GET['query'])) {
 
   if ($query == 'select') {
     $r = Manager::table('users')
-      ->whereIn('users.id', [9, 10, 11])
+      // ->whereIn('users.id', [9, 10, 11])
       ->join('roles', 'id', 'role_id')
       ->orderBy('users.created_at')
       ->select('users.id, users.name, users.email')
       ->exec();
+      // ->count();
     
     var_dump($r);
   }
