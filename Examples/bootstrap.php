@@ -7,6 +7,7 @@ use Morphable\Config;
 use Morphable\Database\Connection;
 use Morphable\Database\Manager;
 
-$config = new Config($appConfig);
-Connection::staticInstance($config->connection);
-new Manager($config->connection);
+Config::setConfig($appConfig);
+Connection::staticInstance(Config::getConnection());
+
+new Manager(Config::getConnection());

@@ -8,7 +8,7 @@ class Config {
    * Database connection
    * @var array
    */
-  public $connection = [
+  public static $connection = [
     'host' => 'localhost',
     'port' => 3306,
     'user' => 'root',
@@ -25,63 +25,68 @@ class Config {
    * Third party libraries
    * @var array
    */
-  public $libraries = [];
+  public static $libraries = [];
 
   /**
    * Root path of the app
    * @var string
    */
-  public $root;
+  public static $root;
 
   /**
    * Enviroment
    * @var string
    */
-  public $env;
+  public static $env;
 
   /**
    * Url
    * @var string
    */
-  public $url;
+  public static $url;
 
   /**
    * Errors
    * @var boolean
    */
-  public $errors = true;
+  public static $errors = true;
 
   /**
-   * @return self
+   * Set config property
+   * @param array
+   * @return void
    */
-  function __construct ($config = null) {
-    if ($config != null) {
-      foreach ($config as $key => $val) {
-        $this->$key = $val;
-      }
+  public static function setConfig ($config) {
+    foreach ($config as $key => $val) {
+      self::$$key = $val;
     }
-    return $this;
+  }
+
+  /**
+   * Get connection property
+   * @return array
+   */
+  public static function getConnection () {
+    return self::$connection;
   }
 
   /**
    * Edit a connection value
    * @param string type
    * @param string value
-   * @return self
+   * @return void
    */
-  public function setConnectionValue ($type, $value) {
-    $this->connection[$type] = $value;
-    return $this;
+  public static function setConnectionValue ($type, $value) {
+    self::$connection[$type] = $value;
   }
 
   /**
    * Add a library
    * @param string
-   * @return self
+   * @return void
    */
   public function addLibrary ($library) {
-    $this->libraries[] = $library;
-    return $this;
+    self::$libraries[] = $library;
   }
 
 }
