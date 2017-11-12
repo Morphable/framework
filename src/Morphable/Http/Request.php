@@ -15,7 +15,7 @@ class Request {
 
   function __construct ($route) {
     $this->route = $route;
-    $this->url = $_SERVER['PATH_INFO'];
+    $this->url = $_SERVER['REQUEST_URI'];
     $this->method = $_SERVER['REQUEST_METHOD'];
     $this->host = $_SERVER['SERVER_NAME'];
     $this->cookies = $_COOKIE;

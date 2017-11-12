@@ -13,6 +13,7 @@ $autoloader = new Morphable\Autoloader;
  * Require Exceptions
  */
 $autoloader->addFolder($morphablePath . 'Exceptions');
+$autoloader->addFile($morphablePath . 'Helpers.php');
 
 /**
  * Require Base
@@ -49,7 +50,7 @@ $autoloader->addFile($queryPath . 'QueryBuilder.php');
 $routingPath = $morphablePath . 'Routing/';
 $autoloader->addFile($routingPath . 'Route.php');
 $autoloader->addFile($routingPath . 'Router.php');
-$autoloader->addFile($routingPath . 'RouterBuilder.php');
+$autoloader->addFile($routingPath . 'RouteBuilder.php');
 
 /**
  * Require Console

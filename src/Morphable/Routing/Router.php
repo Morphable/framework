@@ -5,35 +5,87 @@ namespace Morphable\Routing;
 class Router {
 
   public static $routes = [];
+  public static $middleware = [];
+  public static $groups = [];
 
   function __construct () {
 
   }
 
-  public static function add ($method, $url, $callback) {
-    $route = new Route($method, $url, $callback);
+  public static function getRoutes () {
+    return self::$routes;
+  }
+
+  public static function getMiddleware () {
+    return self::$middleware;
+  }
+
+  public static function runMiddleware ($name, $route, $next) {
+    self::$middleware[$name]($route->req, $route->res, $next);
+  }
+
+  public static function middleware ($name, $function) {
+    self::$middleware[$name] = $function;
+  }
+
+  public static function add ($method, $url, $middleware, $callback) {
+    $route = new Route($method, $url, $middleware, $callback);
     self::$routes[] = $route;
     return $route;
   }
 
-  public static function get ($url, $callback) {
-    return self::add('GET', $url, $callback);
+  public static function get ($url, $middleware = [], $callback = null) {
+    if (is_callable($middleware)) {
+      $callback = $middleware;
+      $middleware = [];
+    }
+
+    return self::add('GET', $url, $middleware, $callback);
   }
 
-  public static function post ($url, $callback) {
-    return self::add('POST', $url, $callback);
+  public static function post ($url, $middleware = [], $callback = null) {
+    if (is_callable($middleware)) {
+      $callback = $middleware;
+      $middleware = [];
+    }
+
+    return self::add('POST', $url, $middleware, $callback);
   }
 
-  public static function put ($url, $callback) {
-    return self::add('PUT', $url, $callback);
+  public static function PUT ($url, $middleware = [], $callback = null) {
+    if (is_callable($middleware)) {
+      $callback = $middleware;
+      $middleware = [];
+    }
+
+    return self::add('PUT', $url, $middleware, $callback);
   }
 
-  public static function patch ($url, $callback) {
-    return self::add('PATCH', $url, $callback);
+  public static function patch ($url, $middleware = [], $callback = null) {
+    if (is_callable($middleware)) {
+      $callback = $middleware;
+      $middleware = [];
+    }
+
+    return self::add('PATCH', $url, $middleware, $callback);
   }
 
-  public static function DELETE ($url, $callback) {
-    return self::add('DELETE', $url, $callback);
+  public static function delete ($url, $middleware = [], $callback = null) {
+    if (is_callable($middleware)) {
+      $callback = $middleware;
+      $middleware = [];
+    }
+
+    return self::add('DELETE', $url, $middleware, $callback);
+  }
+
+  public static function any ($url, $middleware = [], $callback = null) {
+    if (is_callable($middleware)) {
+      $callback = $middleware;
+      $middleware = [];
+    }
+
+    return self::add('ANY', $url, $middleware, $callback);
   }
 
 }

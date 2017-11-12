@@ -12,13 +12,19 @@ class Route {
   public $callback;
   public $prefix = '';
   public $suffix = '';
+  public $req;
+  public $res;
 
-  function __construct ($method, $route, $callback) {
+  function __construct ($method, $route, $middleware, $callback) {
     $this->method = $method;
     $this->route = $route;
-    
+    $this->middleware = $middleware;
     $this->callback = $callback;
-    $callback(new Http\Request($this), new Http\Response($this));
+
+    $this->req = new Http\Request($this);
+    $this->res = new Http\Response($this);
+
+    $callback($this->req, $this->res);
 
     return $this;
   }
