@@ -9,7 +9,6 @@ class Route {
   public $route;
   public $middleware = [];
   public $method;
-  public $controller;
   public $callback;
   public $prefix = '';
   public $suffix = '';
@@ -18,12 +17,8 @@ class Route {
     $this->method = $method;
     $this->route = $route;
     
-    if (is_callable($callback)) {
-      $this->callback = $callback;
-      $callback(new Http\Request($this), new Http\Response($this));
-    } else {
-      $this->controller = $callback;
-    }
+    $this->callback = $callback;
+    $callback(new Http\Request($this), new Http\Response($this));
 
     return $this;
   }
@@ -36,10 +31,6 @@ class Route {
     }
 
     return $this;
-  }
-
-  public function print () {
-    var_dump($this);
   }
 
 }

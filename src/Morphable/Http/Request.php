@@ -4,23 +4,26 @@ namespace Morphable\Http;
 
 class Request {
 
-  public static $url;
-  public static $method;
-  public static $host;
-  public static $params;
-  public static $cookies;
-  public static $sessions;
-  public static $server;
+  public $url;
+  public $method;
+  public $host;
+  public $params;
+  public $cookies;
+  public $sessions;
+  public $server;
   public $route;
 
   function __construct ($route) {
     $this->route = $route;
-    self::$url = $_SERVER['PATH_INFO'];
-    self::$method = $_SERVER['REQUEST_METHOD'];
-    self::$host = $_SERVER['SERVER_NAME'];
-    self::$cookies = $_COOKIE;
-    self::$sessions = $_SESSION;
-    self::$server = $_SERVER;
+    $this->url = $_SERVER['PATH_INFO'];
+    $this->method = $_SERVER['REQUEST_METHOD'];
+    $this->host = $_SERVER['SERVER_NAME'];
+    $this->cookies = $_COOKIE;
+    $this->server = $_SERVER;
+  }
+
+  public function method () {
+    return self::$method;
   }
 
   public function url () {

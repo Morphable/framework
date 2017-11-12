@@ -2,8 +2,6 @@
 
 use Morphable\Routing\Router;
 
-Router::add('GET', '/user', function ($req, $res) {
-
-  
-
+Router::get('/user', function ($req, $res) {
+  var_dump($req->cookies);
 });
