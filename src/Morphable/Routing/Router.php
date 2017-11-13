@@ -20,8 +20,8 @@ class Router {
     return self::$middleware;
   }
 
-  public static function runMiddleware ($name, $route, $next) {
-    self::$middleware[$name]($route->req, $route->res, $next);
+  public static function runMiddleware ($name, $route) {
+    self::$middleware[$name]($route->req, $route->res);
   }
 
   public static function middleware ($name, $function) {

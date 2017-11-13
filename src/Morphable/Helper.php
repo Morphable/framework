@@ -5,9 +5,11 @@ namespace Morphable;
 class Helper {
 
   static function removeEmptyItems ($array) {
-    return array_filter($array, function ($value) {
+    $array = array_filter($array, function ($value) {
       return $value != '';
     });
+
+    return array_values($array);
   }
 
   static function allTrue ($array) {

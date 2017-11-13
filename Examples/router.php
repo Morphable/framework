@@ -4,49 +4,50 @@ use Morphable\Routing\Router;
 use Morphable\Routing\RouteBuilder;
 
 $url = $_SERVER['REQUEST_URI'];
-$route = '/user/:userId/?optional/post/:postId/';
+$route = 'user/:userId/post/:postId/?ok';
 
-$split = RouteBuilder::splitAndBuildParams($url, $route);
+echo $url . PHP_EOL;
+echo $route . PHP_EOL;
 
-$compare = RouteBuilder::compareRoute($split['url'], $split['route']);
+$params = RouteBuilder::buildRoute($route);
+$params = RouteBuilder::fillParams($url, $params);
 
+// var_dump($params);
 
-
-?>
-
-<pre>
-  <?= var_dump($split); ?>
-</pre>
-
-<?php
-
+if (RouteBuilder::compare($params)) {
+  echo 'success!';
+} else {
+  echo 'failed!';
+}
 
 die;
 
-Router::middleware('name', function ($req, $res, $next) {
-  if (true) {
-    $next();
-  } else {
-    echo 'booooo';
+Router::middleware('name', function ($req, $res) {
+  
+});
+
+Router::middleware('name2', function ($req, $res) {
+  if ($req->params['userId'] != 2) {
+    $res->redirect('/posts');
   }
 });
 
-Router::get('/user/:userId', function ($req, $res) {
+Router::get('/user/:userId', ['name', 'name2'], function ($req, $res) {
   echo 'user details';
 });
 
-$r = Router::get('/user', ['name'], function ($req, $res) {
-  // echo 'user index';
+$r = Router::get('/user', function ($req, $res) {
+  echo 'user index';
 });
 
 Router::get('/posts', function ($req, $res) {
-  // echo 'post index';
+  echo 'post index';
 });
 
 Router::any('*', function ($req, $res) {
   echo '404';
 });
 
-Router::runMiddleware('name', $r, function () {
-  echo 'yeah!';
-});
+// Router::runMiddleware('name', $r, function () {
+//   echo 'yeah!';
+// });

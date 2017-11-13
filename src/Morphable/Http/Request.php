@@ -22,6 +22,11 @@ class Request {
     $this->server = $_SERVER;
   }
 
+  public function setParams ($params) {
+    $this->params = $params;
+    return $this;
+  }
+
   public function method () {
     return self::$method;
   }

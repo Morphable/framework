@@ -39,10 +39,11 @@ class RouteBuilder {
     ];
   }
 
-  public static function compareRoute ($url, $route) {
-    
-    
+  public static function compareRoute ($url, $route) {    
     $check = [];
+    $count = 0;
+
+    if (count($url) != count($route)) return false;
 
     foreach ($route as $key => $value) {
       $firstChar = $value[0];
@@ -76,6 +77,84 @@ class RouteBuilder {
       'url' => $url,
       'route' => $route
     ];
+  }
+
+  public static function compare ($params) {
+
+    $success = true;
+
+    foreach ($params as $param) {
+
+      if ($param['required']) {
+        if ($param['value'] == null) {
+          $success = false;
+          break;
+        }
+      }
+
+      if ($param['match']) {
+        if ($param['value'] != $param['param']) {
+          $success = false;
+          break;
+        }
+      }
+
+    }
+
+    return $success;
+
+  }
+
+  public static function fillParams ($url, $params) {
+    $url = Helper::removeEmptyItems(explode('/', $url));
+
+    foreach ($params as $key => &$value) {
+      if (isset($url[$key])) {
+        $value['value'] = $url[$key];
+      }
+    }
+
+    return $params;
+  }
+
+  public static function buildRoute ($route) {
+    $params = [];
+    
+    $route = Helper::removeEmptyItems(explode('/', $route));
+
+    foreach ($route as $param) {
+      if ($param[0] == ':') {
+        $params[] = [
+          'match' => false,
+          'required' => true,
+          'param' => substr($param, 1),
+          'value' => null,
+        ];
+      } else if ($param[0] == '?') {
+        $params[] = [
+          'match' => false,
+          'required' => false,
+          'param' => substr($param, 1),
+          'value' => null
+        ];
+      } else if ($param == '*') {
+        $params[] = [
+          'match' => false,
+          'required' => true,
+          'param' => '*',
+          'value' => null
+        ];
+      } else {
+        $params[] = [
+          'match' => true,
+          'required' => true,
+          'param' => $param,
+          'value'=> null
+        ];
+      }
+    }
+    
+    return $params;
   }
 
   public static function buildParams ($url, $route) {
