@@ -79,6 +79,16 @@ class RouteBuilder {
     ];
   }
 
+  public static function urlTooLong ($url, $params) {
+    $url = Helper::removeEmptyItems(explode('/', $url));
+    // echo count($url);
+    if (count($url) > count($params)) {
+      return true;
+    }
+
+    return false;
+  }
+
   public static function compare ($params) {
 
     $success = true;
@@ -86,7 +96,7 @@ class RouteBuilder {
     foreach ($params as $param) {
 
       if ($param['required']) {
-        if ($param['value'] == null) {
+        if ($param['value'] == null || $param['value'] == '') {
           $success = false;
           break;
         }
