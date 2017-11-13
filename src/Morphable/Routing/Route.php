@@ -23,9 +23,18 @@ class Route {
     $this->req = new Http\Request($this);
     $this->res = new Http\Response($this);
 
-    $this->check(function () use ($callback) {
-      $this->execMiddleware($callback);
-    });
+    if ($route == '404') {
+      $callback($this->req, $this->res);
+    } else {
+      if (RouteBuilder::compareMethod($_SERVER['REQUEST_METHOD'], $this->method)) {
+        RouteBuilder::buildAndCompare($_SERVER['REQUEST_URI'], $this->route, function ($params) use ($callback) {
+          $this->req->params = $params;
+          $this->execMiddleware($callback);
+          die;
+        });
+      }
+    }
+
   }
 
   private function execMiddleware ($callback) {
@@ -33,18 +42,6 @@ class Route {
       Router::runMiddleware($middleware, $this);
     }
     $callback($this->req, $this->res);
-  }
-
-  private function check ($callback) {
-    $url = $_SERVER['REQUEST_URI'];
-    $method = $_SERVER['REQUEST_METHOD'];
-    $split = RouteBuilder::splitAndBuildParams($url, $this->route);
-    if (RouteBuilder::compareMethod($method, $this->method)) {
-      if (RouteBuilder::compareRoute($split['url'], $split['route'])) {
-        $this->req->setParams($split['params']);
-        $callback();
-      }
-    }
   }
 
   public function middleware ($middleware) {

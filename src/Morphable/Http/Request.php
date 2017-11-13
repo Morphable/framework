@@ -27,17 +27,4 @@ class Request {
     return $this;
   }
 
-  public function method () {
-    return self::$method;
-  }
-
-  public function url () {
-    return self::$url;
-  }
-
-  public function params () {
-    // return self::$params;
-  } 
-
-
 }

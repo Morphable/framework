@@ -5,14 +5,6 @@ namespace Morphable\Routing;
 use Morphable\Helper;
 
 class RouteBuilder {
-  
-  private static $url;
-  private static $method;
-
-  function __construct () {
-    self::$requestUrl = $_SERVER['REQUEST_URI'];
-    self::$method = $_SERVER['REQUEST_METHOD'];
-  }
 
   public static function compareMethod ($method1, $method2) {
     $method1 = strtoupper($method1);
@@ -27,61 +19,20 @@ class RouteBuilder {
     }
   }
 
-  public static function splitAndBuildParams ($url, $route) {
-    $exploded = self::splitUrlAndRoute($url, $route);
-    $url = $exploded['url'];
-    $route = $exploded['route'];
+  public static function buildAndCompare ($url, $route, $callback) {
+    $params = self::buildParams($route);
+    $params = self::fillParams($url, $params);
+    $compare = self::compare($params);
+    $urlTooLong = self::urlTooLong($url, $params);
 
-    return [
-      'url' => $url,
-      'route' => $route,
-      'params' => self::buildParams($url, $route)
-    ];
-  }
-
-  public static function compareRoute ($url, $route) {    
-    $check = [];
-    $count = 0;
-
-    if (count($url) != count($route)) return false;
-
-    foreach ($route as $key => $value) {
-      $firstChar = $value[0];
-      if (isset($url[$key])) {
-        if ($firstChar !== ':' && $firstChar != '?') {
-          if ($value == $url[$key]) {
-            $check[] = true;
-          } else {
-            $check[] = false;
-          }
-        } else {
-          $check[] = true;
-        }
-      } else {
-        if ($firstChar == '?') {
-          $check[] = true;
-        } else {
-          $check[] = false;
-        }
-      }
+    if ($compare && !$urlTooLong) {
+      $params = self::getParams($params);
+      $callback($params);
     }
-
-    return Helper::allTrue($check);
-  }
-
-  public static function splitUrlAndRoute ($url, $route) {
-    $url = Helper::removeEmptyItems(explode('/', $url));
-    $route = Helper::removeEmptyItems(explode('/', $route));
-
-    return [
-      'url' => $url,
-      'route' => $route
-    ];
   }
 
   public static function urlTooLong ($url, $params) {
     $url = Helper::removeEmptyItems(explode('/', $url));
-    // echo count($url);
     if (count($url) > count($params)) {
       return true;
     }
@@ -90,11 +41,9 @@ class RouteBuilder {
   }
 
   public static function compare ($params) {
-
     $success = true;
 
     foreach ($params as $param) {
-
       if ($param['required']) {
         if ($param['value'] == null || $param['value'] == '') {
           $success = false;
@@ -108,11 +57,9 @@ class RouteBuilder {
           break;
         }
       }
-
     }
 
     return $success;
-
   }
 
   public static function fillParams ($url, $params) {
@@ -127,7 +74,19 @@ class RouteBuilder {
     return $params;
   }
 
-  public static function buildRoute ($route) {
+  public static function getParams ($params) {
+    $result = [];
+    
+    foreach ($params as $param) {
+      if (!$param['match']) {
+        $result[$param['param']] = $param['value'];
+      }
+    }
+
+    return $result;
+  }
+
+  public static function buildParams ($route) {
     $params = [];
     
     $route = Helper::removeEmptyItems(explode('/', $route));
@@ -135,22 +94,22 @@ class RouteBuilder {
     foreach ($route as $param) {
       if ($param[0] == ':') {
         $params[] = [
-          'match' => false,
           'required' => true,
+          'match' => false,
           'param' => substr($param, 1),
           'value' => null,
         ];
       } else if ($param[0] == '?') {
         $params[] = [
-          'match' => false,
           'required' => false,
+          'match' => false,
           'param' => substr($param, 1),
           'value' => null
         ];
       } else if ($param == '*') {
         $params[] = [
-          'match' => false,
           'required' => true,
+          'match' => false,
           'param' => '*',
           'value' => null
         ];
@@ -167,24 +126,24 @@ class RouteBuilder {
     return $params;
   }
 
-  public static function buildParams ($url, $route) {
-    $result = [];
+  // public static function buildParams ($url, $route) {
+  //   $result = [];
 
-    foreach ($route as $key => $param) {
-      if ($param != '') {
-        if ($param[0] == ':' || $param[0] == '?') {
-          $param = substr($param, 1);
-          if (isset($url[$key])) {
-            $result[$param] = $url[$key];
-          } else {
-            $result[$param] = false;
-            break;
-          }
-        }
-      }
-    }
+  //   foreach ($route as $key => $param) {
+  //     if ($param != '') {
+  //       if ($param[0] == ':' || $param[0] == '?') {
+  //         $param = substr($param, 1);
+  //         if (isset($url[$key])) {
+  //           $result[$param] = $url[$key];
+  //         } else {
+  //           $result[$param] = false;
+  //           break;
+  //         }
+  //       }
+  //     }
+  //   }
 
-    return $result;
-  }
+  //   return $result;
+  // }
 
 }

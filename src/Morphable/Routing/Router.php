@@ -8,10 +8,6 @@ class Router {
   public static $middleware = [];
   public static $groups = [];
 
-  function __construct () {
-
-  }
-
   public static function getRoutes () {
     return self::$routes;
   }
