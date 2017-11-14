@@ -47,10 +47,26 @@ $autoloader->addFile($queryPath . 'QueryBuilder.php');
 /**
  * Require Routing
  */
-$routingPath = $morphablePath . 'Routing/';
-$autoloader->addFile($routingPath . 'Route.php');
-$autoloader->addFile($routingPath . 'Router.php');
-$autoloader->addFile($routingPath . 'RouteBuilder.php');
+// $autoloader->addFolder($morphablePath . 'Routing/');
+
+
+/**
+ * Require Routing v2
+ */
+$routingV2 = $morphablePath . 'Routing-v2/';
+$autoloader->addFolder($routingV2 . 'Exceptions');
+$autoloader->addFile($routingV2 . 'Middleware.php');
+$autoloader->addFile($routingV2 . 'Dispatchers\DispatcherInterface.php');
+$autoloader->addFile($routingV2 . 'Dispatchers\Dispatcher.php');
+$autoloader->addFile($routingV2 . 'Dispatchers\RouteDispatcher.php');
+$autoloader->addFile($routingV2 . 'Dispatchers\GroupDispatcher.php');
+
+$autoloader->addFile($routingV2 . 'RouterInterface.php');
+$autoloader->addFile($routingV2 . 'RouterFactory.php');
+$autoloader->addFile($routingV2 . 'Router.php');
+$autoloader->addFile($routingV2 . 'Group.php');
+
+$autoloader->addFile($routingV2 . 'Route.php');
 
 /**
  * Require Console
