@@ -31,13 +31,22 @@ $router->prefix('api', function ($router) {
   $router->middleware(['hasApiKey'], function ($router) {
 
     $router->get('user', function ($req, $res) {
-      echo 'Index of users';
+      ?>
+        <form action="user/postrequest?apikey=1" method="post">
+          <input type="text" name="name" value="<?= $_GET['apikey'] ?>">
+          <input type="submit">
+        </form>
+      <?php
+    });
+
+    $router->post('user/postrequest', function ($req, $res) {
+      var_dump($_SESSION);
+      // $res->back();
     });
 
 
 
     $router->get('user/:userId', ['validUser'], function ($req, $res) {
-      echo 'User details';
     });
 
   });

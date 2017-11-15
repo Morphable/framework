@@ -25,4 +25,20 @@ class Helper {
     return $allTrue;
   }
 
+  static function currentUrl () {
+    $http = 'http';
+    if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'){
+        $http .= 's';
+    }
+
+    $http .= '://';
+
+    $host = $_SERVER['SERVER_NAME'];
+    if (isset($_SERVER['SERVER_PORT'])) {
+      $host .= ':' . $_SERVER['SERVER_PORT'];
+    }
+
+    return $http . $host . $_SERVER['REQUEST_URI'];
+  }
+
 }

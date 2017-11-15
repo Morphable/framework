@@ -2,7 +2,7 @@
 
 namespace Morphable\Http;
 
-class Response {
+class Response implements Interfaces\Response {
 
   public function redirect ($url) {
     $this->status(301);
@@ -22,6 +22,10 @@ class Response {
     $this->header('Content-type', 'application/json');
     echo json_encode($json);
     exit;
+  }
+
+  public function back () {
+    $this->redirect($_SESSION['previous_url']);
   }
 
 }

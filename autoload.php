@@ -26,6 +26,7 @@ $autoloader->addFile($databasePath . 'Manager.php');
  * Require request and response
  */
 $httpPath = $morphablePath . 'Http/';
+$autoloader->addFolder($httpPath . 'Interfaces');
 $autoloader->addFile($httpPath . 'Request.php');
 $autoloader->addFile($httpPath . 'Response.php');
 
