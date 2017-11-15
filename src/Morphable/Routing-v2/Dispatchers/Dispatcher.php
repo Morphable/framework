@@ -23,7 +23,6 @@ class Dispatcher implements Interfaces\Dispatcher {
 
     $this->url = $this->request->url;
     $this->method = $this->request->method;
-
     $this->urlToParams();
 
     return $this;
@@ -31,7 +30,6 @@ class Dispatcher implements Interfaces\Dispatcher {
 
   public function dispatch () {
     $count = 0;
-    
     foreach ($this->router as $group) {
       $count++;
       $dispatcher = new GroupDispatcher($this, $group);
@@ -45,11 +43,6 @@ class Dispatcher implements Interfaces\Dispatcher {
     if ($count == count($this->router)) {
       $this->setException(new Exceptions\NotFoundException('Route not found'));
     }
-
-  }
-
-  public function getException () {
-    return $this->exception;
   }
 
   public function urlToParams () {
@@ -69,8 +62,13 @@ class Dispatcher implements Interfaces\Dispatcher {
     return $this->params;
   }
 
-  private function setException ($ex) {
-    $this->exception = $ex;
+  public function setException ($exception) {
+    $this->exception = $exception;
+    return $this;
+  }
+
+  public function getException () {
+    return $this->exception;
   }
 
 }

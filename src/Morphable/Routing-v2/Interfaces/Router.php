@@ -2,6 +2,13 @@
 
 namespace Morphable\Routing\Interfaces;
 
+/**
+ * The purpose of the router class
+ * is to add and set properties
+ * in the router factory. this is
+ * so the router factory doesn't
+ * get too big and unreadable.
+ */
 interface Router {
 
   /**

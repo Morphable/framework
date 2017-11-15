@@ -22,20 +22,20 @@ class RouteDispatcher implements Interfaces\RouteDispatcher {
     return $this;
   }
 
-  public function requestUrlTooLong () {
-    if (count($this->requestParams) > count($this->params)) {
-      return true;
-    }
-
-    return false;
-  }
-
   public function routeToParams () {
     return Helper::explodeUrl($this->route->route);
   }
 
   public function setValueParam ($key) {
     return isset($this->requestParams[$key]) ? $this->requestParams[$key] : null;
+  }
+
+  public function requestUrlTooLong () {
+    if (count($this->requestParams) > count($this->params)) {
+      return true;
+    }
+
+    return false;
   }
 
   public function buildMatchParams () {
@@ -93,12 +93,10 @@ class RouteDispatcher implements Interfaces\RouteDispatcher {
 
       $this->executeMiddleware($request, $response);
       $handler($request, $response);
+
+      $_SESSION['previous_url'] = Helper::currentUrl();
       die;
     }
-  }
-
-  public function executeMiddleware ($req, $res) {
-    Middleware::exec($this->route->middleware, $req, $res);
   }
 
   public function match () {
@@ -125,6 +123,10 @@ class RouteDispatcher implements Interfaces\RouteDispatcher {
     }
 
     return $success;
+  }
+
+  public function executeMiddleware ($req, $res) {
+    Middleware::exec($this->route->middleware, $req, $res);
   }
 
 }

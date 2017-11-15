@@ -18,14 +18,6 @@ class GroupDispatcher implements Interfaces\GroupDispatcher {
     return $this;
   }
 
-  public function validateMethod ($route) {
-    if ($route->method == 'any' || $route->method == \strtolower($this->dispatcher->getMethod())) {
-      return true;
-    }
-
-    return false;
-  }
-
   public function dispatch () {
     foreach ($this->routes as $route) {
       if ($this->validateMethod($route['route'])) {
@@ -33,6 +25,14 @@ class GroupDispatcher implements Interfaces\GroupDispatcher {
         $object->dispatch($route['handler']);
       }
     }
+  }
+
+  public function validateMethod ($route) {
+    if ($route->method == 'any' || $route->method == \strtolower($this->dispatcher->getMethod())) {
+      return true;
+    }
+
+    return false;
   }
 
 }

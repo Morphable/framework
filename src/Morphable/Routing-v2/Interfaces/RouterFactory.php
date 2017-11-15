@@ -2,6 +2,11 @@
 
 namespace Morphable\Routing\Interfaces;
 
+/**
+ * In the router factory the routes,
+ * groups, middleware and prefixes
+ * gets set.
+ */
 interface RouterFactory {
 
   /**

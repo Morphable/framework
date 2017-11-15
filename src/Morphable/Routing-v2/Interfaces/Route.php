@@ -2,6 +2,10 @@
 
 namespace Morphable\Routing\Interfaces;
 
+/**
+ * This class is to save a
+ * single route in.
+ */
 interface Route {
 
   /**
