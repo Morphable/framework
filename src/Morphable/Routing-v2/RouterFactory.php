@@ -50,7 +50,7 @@ class RouterFactory extends Router implements Interfaces\RouterFactory {
     $routeObject = new Route(strtolower($method), $route, $middleware);
 
     $this->routes[] = [
-      'route' => $routeObject->get(),
+      'route' => $routeObject,
       'handler' => $callback
     ];
 

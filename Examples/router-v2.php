@@ -2,6 +2,8 @@
 
 use Morphable\Routing\RouterFactory as Router;
 use Morphable\Routing\Middleware as Middleware;
+use Morphable\Routing\Dispatchers\Dispatcher;
+use Morphable\Http\Request;
 
 $m3 = new Middleware('userAllowed', function ($req, $res) {
 
@@ -46,15 +48,17 @@ $router->get('post/:postId', function ($router) {
   exit;
 });
 
-?>
+$request = new Request();
+$router = Router::getGroups();
 
-<pre>
-  <?= 
-var_dump(Router::getGroups());
-  
-  ?>
-</pre>
+$dispatcher = new Dispatcher($router, $request);
 
-<?php
+var_dump($dispatcher->getParams());
 
 
+if (isset($_GET['json'])) {
+  if ($_GET['json'] == 'true') {
+    header('Content-type: application/json');
+    echo json_encode(Router::getGroups());
+  }
+}

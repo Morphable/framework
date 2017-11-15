@@ -11,15 +11,13 @@ class Request {
   public $cookies;
   public $sessions;
   public $server;
-  public $route;
 
-  function __construct ($route) {
-    $this->route = $route;
+  function __construct () {
     $this->url = $_SERVER['REQUEST_URI'];
     $this->method = $_SERVER['REQUEST_METHOD'];
     $this->host = $_SERVER['SERVER_NAME'];
     $this->cookies = $_COOKIE;
-    $this->server = $_SERVER;
+    $this->headers = getallheaders();
   }
 
   public function setParams ($params) {
