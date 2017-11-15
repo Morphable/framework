@@ -16,6 +16,10 @@ class Middleware {
     return $this;
   }
 
+  public static function getMiddlewareByName ($name) {
+    return Middleware::$middleware[$name];
+  }
+
   public static function getMiddleware () {
     return Middleware::$middleware;
   }

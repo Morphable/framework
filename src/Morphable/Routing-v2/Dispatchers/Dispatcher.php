@@ -2,6 +2,8 @@
 
 namespace Morphable\Routing\Dispatchers;
 
-class Dispatcher implements DispatcherInterface {
+use Morphable\Routing\Interfaces;
+
+class Dispatcher implements Interfaces\Dispatcher {
   
 }
