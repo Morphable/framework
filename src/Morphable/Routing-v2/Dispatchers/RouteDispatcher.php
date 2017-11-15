@@ -3,6 +3,7 @@
 namespace Morphable\Routing\Dispatchers;
 
 use Morphable\Routing\Interfaces;
+use Morphable\Routing\Middleware;
 use Morphable\Helper;
 use Morphable\Http;
 
@@ -89,9 +90,15 @@ class RouteDispatcher implements Interfaces\RouteDispatcher {
       $request = new Http\Request();
       $response = new Http\Response();
       $request->setParams($this->getParams());
+
+      $this->executeMiddleware($request, $response);
       $handler($request, $response);
       die;
     }
+  }
+
+  public function executeMiddleware ($req, $res) {
+    Middleware::exec($this->route->middleware, $req, $res);
   }
 
   public function match () {

@@ -6,4 +6,6 @@ use Exception;
 
 class MethodNotAllowedException extends Exception {
   
+  
+
 }

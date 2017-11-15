@@ -13,7 +13,7 @@ class Request {
   public $server;
 
   function __construct () {
-    $this->url = $_SERVER['REQUEST_URI'];
+    $this->url = $_SERVER['PATH_INFO'];
     $this->method = $_SERVER['REQUEST_METHOD'];
     $this->host = $_SERVER['SERVER_NAME'];
     $this->cookies = $_COOKIE;

@@ -6,13 +6,12 @@ use Exception;
 
 class NotFoundException extends Exception {
   
-  public function run () {
-    header('Content-type: application/json');
-    echo json_encode([
-      'code' => 404,
-      'message' => $this->getMessage()
+  public function response ($res) {
+    $res->status(404);
+    $res->json([
+      'Status' => 404,
+      'Error' => $this->getMessage()
     ]);
-    die;
   }
 
 }

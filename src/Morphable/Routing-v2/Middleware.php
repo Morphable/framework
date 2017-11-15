@@ -12,7 +12,7 @@ class Middleware {
     $this->callback = $callback;
     $this->name = $name;
 
-    Middleware::$middleware[$this->name] = $this->callback;
+    Middleware::$middleware[$this->name] = $callback;
     return $this;
   }
 
@@ -31,5 +31,16 @@ class Middleware {
   public function getName () {
     return $this->name;
   }
+
+  static function exec ($middleware, $req, $res) {
+    if (is_array($middleware)) {
+      foreach ($middleware as $mw) {
+        $mw = self::getMiddlewareByName($mw);
+        $mw($req, $res);
+      }
+    } else {
+      $middleware($req, $res);
+    }
+  } 
 
 }

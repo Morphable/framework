@@ -45,7 +45,7 @@ class RouterFactory extends Router implements Interfaces\RouterFactory {
     }
 
     $route = $this->prefix . $this->normalizeRoute($route);
-    $middleware = array_merge($middleware, $this->middleware);
+    $middleware = array_merge($this->middleware, $middleware);
 
     $routeObject = new Route(strtolower($method), $route, $middleware);
 
@@ -110,7 +110,7 @@ class RouterFactory extends Router implements Interfaces\RouterFactory {
 
   public function addMiddleware ($middleware) {
     if (is_array($middleware)) {
-      $this->middleware =  array_merge($this->middleware, $middleware); 
+      $this->middleware = array_merge($middleware, $this->middleware); 
     } else {
       $this->middleware[] = $middleware;
     }

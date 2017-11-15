@@ -6,52 +6,60 @@ use Morphable\Routing\Dispatchers\Dispatcher;
 use Morphable\Routing\Exceptions;
 use Morphable\Http\Request;
 
-$m3 = new Middleware('userAllowed', function ($req, $res) {
+$m3 = new Middleware('hasApiKey', function ($req, $res) {
+  if (!isset($_GET['apikey'])) {
+    $ex = new Exceptions\BadRequestException('Missing api key');
+    $ex->response($res);
+  }
+});
 
+$m3 = new Middleware('validUser', function ($req, $res) {
+  if ($req->params['userId'] != 1) {
+    $ex = new Exceptions\NotAllowedException('Wrong user id');
+    $ex->response($res);
+  }
 });
 
 $router = new Router;
 
-$router->get('post', function ($req, $res) {
-  echo 'post index';
-  exit;
-});
+$router->prefix('api', function ($router) {
 
-$router->prefix ('api/', function ($router) {
-
-  $router->get('', function ($req, $res) {
-    echo 'index api';
-    exit;
+  $router->get('', function ($router) {
+    echo 'Api index';
   });
 
-  $router->middleware('checkApiKey', function ($router) {
+  $router->middleware(['hasApiKey'], function ($router) {
 
-    $router->prefix('/user/', function ($router) {
+    $router->get('user', function ($req, $res) {
+      echo 'Index of users';
+    });
 
-      $router->get('', function ($req, $res) {
-        echo 'index user';
-        exit;
-      });
 
-      $router->get(':userId', function ($req, $res) {
-        var_dump($req->params['userId']);
-        exit;
-      });
 
+    $router->get('user/:userId', ['validUser'], function ($req, $res) {
+      echo 'User details';
     });
 
   });
 
 });
 
-$router->get('post/:postId', function ($req, $res) {
-  echo 'post detail';
+$router->get('403', function ($req, $res) {
+  $res->json([
+    'error' => 403,
+    'message' => 'Not allowed'
+  ]);
   exit;
 });
 
+$router->get('400', function ($req, $res) {
+  $ex = new Exceptions\BadRequestException('Bad request');
+  $ex->response($res);
+});
+
 $router->get('404', function ($req, $res) {
-  echo '404';
-  exit;
+  $ex = new Exceptions\BadRequestException('Route not found');
+  $ex->response($res);
 });
 
 $request = new Request();
