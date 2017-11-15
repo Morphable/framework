@@ -1,8 +1,8 @@
 <?php
 
-namespace Morphable\Routing;
+namespace Morphable\Routing\Interfaces;
 
-interface RouterInterface {
+interface RouterFactory {
 
   public function __construct ();
 

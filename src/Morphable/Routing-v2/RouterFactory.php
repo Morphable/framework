@@ -2,7 +2,7 @@
 
 namespace Morphable\Routing;
 
-class RouterFactory implements RouterInterface {
+class RouterFactory extends Router implements Interfaces\RouterFactory {
 
   public static $groups = [];
   
@@ -39,34 +39,50 @@ class RouterFactory implements RouterInterface {
 
   public function addRoute ($method, $route, $middleware, $callback) {
 
+    if (is_callable($middleware)) {
+      $callback = $middleware;
+      $middleware = [];
+    }
+
+    $route = $this->prefix . $this->normalizeRoute($route);
+    $middleware = array_merge($middleware, $this->middleware);
+
+    $routeObject = new Route(strtolower($method), $route, $middleware);
+
+    $this->routes[] = [
+      'route' => $routeObject,
+      'handler' => $callback
+    ];
+
+    return $routeObject;
   }
 
-  public function get ($route, $middleware, $callback = null) {
-
+  public function get ($route, $middleware = null, $callback = null) {
+    return $this->addRoute('get', $route, $middleware, $callback);
   }
 
   public function post ($route, $middleware, $callback = null) {
-
+    return $this->addRoute('post', $route, $middleware, $callback);
   }
 
   public function put ($route, $middleware, $callback = null) {
-
+    return $this->addRoute('put', $route, $middleware, $callback);
   }
 
   public function patch ($route, $middleware, $callback = null) {
-
+    return $this->addRoute('patch', $route, $middleware, $callback);
   }
 
   public function delete ($route, $middleware, $callback = null) {
-
+    return $this->addRoute('delete', $route, $middleware, $callback);
   }
 
   public function option ($route, $middleware, $callback = null) {
-
+    return $this->addRoute('option', $route, $middleware, $callback);
   }
 
   public function any ($route, $middleware, $callback = null) {
-
+    return $this->addRoute('any', $route, $middleware, $callback);
   }
 
   static function getGroups () {

@@ -2,10 +2,10 @@
 
 namespace Morphable\Routing;
 
-class Router extends RouterFactory {
+class Router implements Interfaces\Router {
 
-  public $routes = [];
-  public $middleware = [];
-  public $prefix = '';
+  public function __construct () {}
+
+  public function match($request) {}
 
 }

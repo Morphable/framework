@@ -55,15 +55,17 @@ $autoloader->addFile($queryPath . 'QueryBuilder.php');
  */
 $routingV2 = $morphablePath . 'Routing-v2/';
 $autoloader->addFolder($routingV2 . 'Exceptions');
+$autoloader->addFolder($routingV2 . 'Interfaces');
+
 $autoloader->addFile($routingV2 . 'Middleware.php');
+
 $autoloader->addFile($routingV2 . 'Dispatchers\DispatcherInterface.php');
 $autoloader->addFile($routingV2 . 'Dispatchers\Dispatcher.php');
 $autoloader->addFile($routingV2 . 'Dispatchers\RouteDispatcher.php');
 $autoloader->addFile($routingV2 . 'Dispatchers\GroupDispatcher.php');
 
-$autoloader->addFile($routingV2 . 'RouterInterface.php');
-$autoloader->addFile($routingV2 . 'RouterFactory.php');
 $autoloader->addFile($routingV2 . 'Router.php');
+$autoloader->addFile($routingV2 . 'RouterFactory.php');
 $autoloader->addFile($routingV2 . 'Group.php');
 
 $autoloader->addFile($routingV2 . 'Route.php');
