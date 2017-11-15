@@ -4,9 +4,9 @@ namespace Morphable\Routing;
 
 class Route {
   
-  private $method;
-  private $route;
-  private $middleware;
+  public $method;
+  public $route;
+  public $middleware;
 
   function __construct ($method = 'get', $route, $middleware = []) {
     $this->method = $method;

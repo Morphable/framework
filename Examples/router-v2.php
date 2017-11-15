@@ -52,8 +52,7 @@ $request = new Request();
 $router = Router::getGroups();
 
 $dispatcher = new Dispatcher($router, $request);
-
-var_dump($dispatcher->getParams());
+$dispatcher->dispatch();
 
 
 if (isset($_GET['json'])) {
