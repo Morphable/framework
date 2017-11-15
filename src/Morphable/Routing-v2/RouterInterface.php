@@ -28,10 +28,16 @@ interface RouterInterface {
 
   public function getRoutes ();
 
+  public function addMiddleware ($middleware);
+
   public function getMiddleware ();
 
-  public function getGroups ();
+  static function getGroups ();
+
+  public function addPrefix ($prefix);
 
   public function getPrefix ();
+
+  public function normalizeRoute ($route);
 
 }
