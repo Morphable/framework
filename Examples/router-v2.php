@@ -11,14 +11,14 @@ $m3 = new Middleware('userAllowed', function ($req, $res) {
 
 $router = new Router;
 
-$router->get('post', function ($router) {
+$router->get('post', function ($req, $res) {
   echo 'post index';
   exit;
 });
 
 $router->prefix ('api/', function ($router) {
 
-  $router->get('', function ($router) {
+  $router->get('', function ($req, $res) {
     echo 'index api';
     exit;
   });
@@ -27,12 +27,12 @@ $router->prefix ('api/', function ($router) {
 
     $router->prefix('/user/', function ($router) {
 
-      $router->get('', function ($router) {
+      $router->get('', function ($req, $res) {
         echo 'index user';
         exit;
       });
 
-      $router->get(':userId', function ($router) {
+      $router->get(':userId', function ($req, $res) {
         echo 'user details';
         exit;
       });
@@ -43,7 +43,7 @@ $router->prefix ('api/', function ($router) {
 
 });
 
-$router->get('post/:postId', function ($router) {
+$router->get('post/:postId', function ($req, $res) {
   echo 'post detail';
   exit;
 });

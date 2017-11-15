@@ -4,9 +4,15 @@ namespace Morphable\Routing\Interfaces;
 
 interface RouteDispatcher {
   
-  public function __construct ($route);
+  public function __construct ($requestParams, $route);
 
-  public function buildRoute ();
+  public function requestUrlTooLong ();
+
+  public function setValueParam ($key);
+
+  public function buildMatchParams ();
+
+  public function routeToParams ();
 
   public function dispatch ($handler);
 

@@ -29,7 +29,8 @@ class GroupDispatcher implements Interfaces\GroupDispatcher {
   public function dispatch () {
     foreach ($this->routes as $route) {
       if ($this->validateMethod($route['route'])) {
-        $object = new RouteDispatcher($route['route']);
+        $object = new RouteDispatcher($this->dispatcher->getParams(), $route['route']);
+
         $object->dispatch($route['handler']);
       }
     }
