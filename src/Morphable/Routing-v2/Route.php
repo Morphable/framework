@@ -7,13 +7,11 @@ class Route {
   private $method;
   private $route;
   private $middleware;
-  // private $callback;
 
   function __construct ($method = 'get', $route, $middleware = []) {
     $this->method = $method;
     $this->route = $route;
     $this->middleware = $middleware;
-    // $this->$callback = $callback;
   }
 
   public function middleware ($middleware) {
@@ -26,6 +24,10 @@ class Route {
     return $this;
   }
 
+  public function get () {
+    return get_object_vars($this);
+  }
+
   public function getMethod () {
     return $this->method;
   }
@@ -36,10 +38,6 @@ class Route {
 
   public function getMiddleware () {
     return $this->middleware;
-  }
-
-  public function getCallback () {
-    return $this->callback();
   }
 
 }
