@@ -3,6 +3,7 @@
 use Morphable\Routing\RouterFactory as Router;
 use Morphable\Routing\Middleware as Middleware;
 use Morphable\Routing\Dispatchers\Dispatcher;
+use Morphable\Routing\Exceptions;
 use Morphable\Http\Request;
 
 $m3 = new Middleware('userAllowed', function ($req, $res) {
@@ -33,7 +34,7 @@ $router->prefix ('api/', function ($router) {
       });
 
       $router->get(':userId', function ($req, $res) {
-        echo 'user details';
+        var_dump($req->params['userId']);
         exit;
       });
 
@@ -48,12 +49,23 @@ $router->get('post/:postId', function ($req, $res) {
   exit;
 });
 
+$router->get('404', function ($req, $res) {
+  echo '404';
+  exit;
+});
+
 $request = new Request();
 $router = Router::getGroups();
 
 $dispatcher = new Dispatcher($router, $request);
 $dispatcher->dispatch();
 
+$exception = $dispatcher->getException();
+
+if ($exception instanceof Exceptions\NotFoundException) {
+  header('Location: /404');
+  die;
+}
 
 if (isset($_GET['json'])) {
   if ($_GET['json'] == 'true') {

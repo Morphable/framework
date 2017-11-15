@@ -88,10 +88,9 @@ class RouteDispatcher implements Interfaces\RouteDispatcher {
     if ($this->match()) {
       $request = new Http\Request();
       $response = new Http\Response();
-
       $request->setParams($this->getParams());
-
       $handler($request, $response);
+      die;
     }
   }
 
