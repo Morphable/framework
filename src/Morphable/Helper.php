@@ -12,6 +12,10 @@ class Helper {
     return array_values($array);
   }
 
+  static function explodeUrl ($url) {
+    return self::removeEmptyItems(explode('/', $url));
+  }
+
   static function allTrue ($array) {
     $allTrue = true;
     foreach ($array as $value) {
