@@ -12,7 +12,15 @@ class Request implements Interfaces\Request {
   public $headers;
 
   function __construct () {
-    $this->url = $_SERVER['PATH_INFO'];
+    
+    if (isset($_SERVER['PATH_INFO'])) {
+      $this->url = $_SERVER['PATH_INFO'];
+    } else {
+      $this->url = '/';
+    }
+
+    // echo $this->url . PHP_EOL;
+
     $this->method = $_SERVER['REQUEST_METHOD'];
     $this->host = $_SERVER['SERVER_NAME'];
     $this->cookies = $_COOKIE;

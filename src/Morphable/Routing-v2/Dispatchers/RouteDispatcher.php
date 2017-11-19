@@ -18,7 +18,7 @@ class RouteDispatcher implements Interfaces\RouteDispatcher {
     $this->requestParams = $requestParams;
     $this->params = $this->routeToParams();
     $this->params = $this->buildMatchParams();
-
+    
     return $this;
   }
 
@@ -101,11 +101,10 @@ class RouteDispatcher implements Interfaces\RouteDispatcher {
 
   public function match () {
     $success = true;
+    
+    if ($this->requestUrlTooLong()) $success = false;
+
     foreach ($this->params as $param) {
-      if ($this->requestUrlTooLong()) {
-        $success = false;
-        break;
-      }
 
       if ($param['required']) {
         if ($param['value'] == null) {

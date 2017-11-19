@@ -22,6 +22,10 @@ $m3 = new Middleware('validUser', function ($req, $res) {
 
 $router = new Router;
 
+$router->get('', function ($req, $res) {
+  echo 'Welcome home!';
+});
+
 $router->prefix('api', function ($router) {
 
   $router->get('', function ($router) {
@@ -87,6 +91,6 @@ if ($exception instanceof Exceptions\NotFoundException) {
 if (isset($_GET['json'])) {
   if ($_GET['json'] == 'true') {
     header('Content-type: application/json');
-    echo json_encode(Router::getGroups());
+    echo json_encode($router::getGroups());
   }
 }
