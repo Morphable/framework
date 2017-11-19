@@ -32,25 +32,14 @@ $router->prefix('api', function ($router) {
     echo 'Api index';
   });
 
-  $router->middleware(['hasApiKey'], function ($router) {
+  $router->middleware([], function ($router) {
 
-    $router->get('user', function ($req, $res) {
-      ?>
-        <form action="user/postrequest?apikey=1" method="post">
-          <input type="text" name="name" value="<?= $_GET['apikey'] ?>">
-          <input type="submit">
-        </form>
-      <?php
+    $router->get('user', ['hasApiKey'],  function ($req, $res) {
+      echo 'index user';
     });
 
-    $router->post('user/postrequest', function ($req, $res) {
-      var_dump($_SESSION);
-      // $res->back();
-    });
-
-
-
-    $router->get('user/:userId', ['validUser'], function ($req, $res) {
+    $router->get('user/:userId', function ($req, $res) {
+      echo 'detail user ' . $req->params['userId'];
     });
 
   });
@@ -75,12 +64,9 @@ $router->get('404', function ($req, $res) {
   $ex->response($res);
 });
 
-$request = new Request();
-$router = Router::getGroups();
+$dispatcher = new Dispatcher(Router::getGroups(), new Request());
 
-$dispatcher = new Dispatcher($router, $request);
 $dispatcher->dispatch();
-
 $exception = $dispatcher->getException();
 
 if ($exception instanceof Exceptions\NotFoundException) {

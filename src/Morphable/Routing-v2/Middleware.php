@@ -17,7 +17,11 @@ class Middleware {
   }
 
   public static function getMiddlewareByName ($name) {
-    return Middleware::$middleware[$name];
+    if (isset(Middleware::$middleware[$name])) {
+      return Middleware::$middleware[$name];
+    } else {
+      return null;
+    }
   }
 
   public static function getMiddleware () {
@@ -35,11 +39,17 @@ class Middleware {
   static function exec ($middleware, $req, $res) {
     if (is_array($middleware)) {
       foreach ($middleware as $mw) {
-        $mw = self::getMiddlewareByName($mw);
-        $mw($req, $res);
+        if (strlen($mw) > 0) {
+          $mw = self::getMiddlewareByName($mw);
+          if ($mw != null) {
+            $mw($req, $res);
+          }
+        }
       }
     } else {
-      $middleware($req, $res);
+      if (strlen($middleware) > 0) {
+        $middleware($req, $res);
+      }
     }
   } 
 

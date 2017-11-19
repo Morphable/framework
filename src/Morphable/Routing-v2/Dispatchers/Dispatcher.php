@@ -18,10 +18,6 @@ class Dispatcher implements Interfaces\Dispatcher {
   public $exception = null;
 
   public function __construct ($router, $request) {
-    // header('content-type: application/json');
-    // echo \json_encode($router);
-    // var_dump($router);
-    // die;
     $this->router = $router;
     $this->request = $request;
 

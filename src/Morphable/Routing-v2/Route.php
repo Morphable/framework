@@ -12,6 +12,7 @@ class Route {
     $this->method = $method;
     $this->route = $route;
     $this->middleware = $middleware;
+
   }
 
   public function middleware ($middleware) {

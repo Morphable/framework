@@ -18,7 +18,7 @@ class RouteDispatcher implements Interfaces\RouteDispatcher {
     $this->requestParams = $requestParams;
     $this->params = $this->routeToParams();
     $this->params = $this->buildMatchParams();
-    
+
     return $this;
   }
 
