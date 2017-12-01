@@ -5,6 +5,9 @@
     "require": {
         "php": ">=7.0"
     },
+    "require-dev": {
+
+    },
     "autoload": {
         "psr-0": {
             "Morphable": "src/Morphable"
