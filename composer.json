@@ -3,7 +3,7 @@
     "description": "A framework",
     "license": "MIT",
     "require": {
-        "php": ">=7.0"
+        
     },
     "require-dev": {
 
