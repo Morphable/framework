@@ -1,0 +1,13 @@
+{
+    "name": "morphable/framework",
+    "description": "A framework",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Morphable": "src/Morphable"
+        }
+    }
+}
