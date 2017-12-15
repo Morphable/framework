@@ -2,86 +2,62 @@
 
 namespace Morphable\Routing;
 
-class Router {
+class Router implements Interfaces\Router {
 
-  public static $routes = [];
-  public static $middleware = [];
-  public static $groups = [];
+  public function addGroup ($type, $value, $callback) {
+    if ($type == 'middleware') {
+      $group = new Group ($this, $value, null, $callback);
+    } else if ($type == 'prefix') {
+      $group = new Group ($this, null, $value, $callback);
+    }
 
-  public static function getRoutes () {
-    return self::$routes;
+    RouterFactory::$groups[] = $group;
+    return $group;
   }
 
-  public static function getMiddleware () {
-    return self::$middleware;
-  }
+  public function addRoute ($method, $route, $middleware, $callback) {
 
-  public static function runMiddleware ($name, $route) {
-    self::$middleware[$name]($route->req, $route->res);
-  }
-
-  public static function middleware ($name, $function) {
-    self::$middleware[$name] = $function;
-  }
-
-  public static function add ($method, $url, $middleware, $callback) {
-    $route = new Route($method, $url, $middleware, $callback);
-    self::$routes[] = $route;
-    return $route;
-  }
-
-  public static function get ($url, $middleware = [], $callback = null) {
     if (is_callable($middleware)) {
       $callback = $middleware;
       $middleware = [];
     }
 
-    return self::add('GET', $url, $middleware, $callback);
+    $route = $this->prefix . $this->normalizeRoute($route);
+    $middleware = array_merge($this->middleware, $middleware);
+
+    $routeObject = new Route(strtolower($method), $route, $middleware);
+
+    $this->routes[] = [
+      'route' => $routeObject,
+      'handler' => $callback
+    ];
+
+    return $routeObject;
   }
 
-  public static function post ($url, $middleware = [], $callback = null) {
-    if (is_callable($middleware)) {
-      $callback = $middleware;
-      $middleware = [];
+  public function setPrefix ($prefix) {
+    $this->prefix = $prefix;
+    return $this;
+  }
+
+  public function addPrefix ($prefix) {
+    $this->prefix .= $this->normalizeRoute($prefix);
+    return $this;
+  }
+
+  public function setMiddleware ($middleware) {
+    $this->middleware = $middleware;
+    return $this;
+  }
+
+  public function addMiddleware ($middleware) {
+    if (is_array($middleware)) {
+      $this->middleware = array_merge($middleware, $this->middleware); 
+    } else {
+      $this->middleware[] = $middleware;
     }
-
-    return self::add('POST', $url, $middleware, $callback);
+    return $this;
   }
 
-  public static function PUT ($url, $middleware = [], $callback = null) {
-    if (is_callable($middleware)) {
-      $callback = $middleware;
-      $middleware = [];
-    }
-
-    return self::add('PUT', $url, $middleware, $callback);
-  }
-
-  public static function patch ($url, $middleware = [], $callback = null) {
-    if (is_callable($middleware)) {
-      $callback = $middleware;
-      $middleware = [];
-    }
-
-    return self::add('PATCH', $url, $middleware, $callback);
-  }
-
-  public static function delete ($url, $middleware = [], $callback = null) {
-    if (is_callable($middleware)) {
-      $callback = $middleware;
-      $middleware = [];
-    }
-
-    return self::add('DELETE', $url, $middleware, $callback);
-  }
-
-  public static function any ($url, $middleware = [], $callback = null) {
-    if (is_callable($middleware)) {
-      $callback = $middleware;
-      $middleware = [];
-    }
-
-    return self::add('ANY', $url, $middleware, $callback);
-  }
 
 }
