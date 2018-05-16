@@ -4,7 +4,8 @@ namespace Morphable;
 
 class Helper {
 
-  static function removeEmptyItems ($array) {
+  static function removeEmptyItems ($array)
+  {
     $array = array_filter($array, function ($value) {
       return $value != '';
     });
@@ -12,20 +13,24 @@ class Helper {
     return array_values($array);
   }
 
-  static function explodeUrl ($url) {
+  static function explodeUrl ($url)
+  {
     return self::removeEmptyItems(explode('/', $url));
   }
 
-  static function allTrue ($array) {
+  static function allTrue ($array)
+  {
     $allTrue = true;
-    foreach ($array as $value) {
+    foreach ($array as $value)
+    {
       if (!$value) $allTrue = false;
     }
 
     return $allTrue;
   }
 
-  static function currentUrl () {
+  static function currentUrl ()
+  {
     $http = 'http';
     if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'){
         $http .= 's';
@@ -39,6 +44,16 @@ class Helper {
     }
 
     return $http . $host . $_SERVER['REQUEST_URI'];
+  }
+
+  public static function array_overwrite($main, $overwrite)
+  {
+    foreach($overwrite as $key => $value)
+    {
+      $main[$key] = $value;
+    }
+
+    return $main;
   }
 
 }
