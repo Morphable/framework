@@ -120,6 +120,17 @@ class Router
     }
 
     /**
+     * Log the routes
+     * @return void
+     */
+    public function logRoutes()
+    {
+        echo "<pre>";
+        print_r($this->routes);
+        echo "</pre>";
+    }
+
+    /**
      * Set event callback
      * @param string
      * @param callable

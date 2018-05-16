@@ -50,6 +50,7 @@ $autoloader->addFile($queryPath . 'QueryBuilder.php');
  * Require Routing v2
  */
 $routingV2 = $morphablePath . 'Routing-v2/';
+$autoloader->addFile($routingV2 . "Config.php");
 $autoloader->addFile($routingV2 . 'Route.php');
 $autoloader->addFile($routingV2 . 'Router.php');
 $autoloader->addFile($routingV2 . 'Dispatcher.php');

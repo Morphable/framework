@@ -2,6 +2,8 @@
 
 namespace Morphable\Routing;
 
+use Morphable\Helper;
+
 /**
  * Route related methods and properties
  */
@@ -33,14 +35,88 @@ class Route {
     private $middlewares = [];
 
     /**
+     * @var string
+     */
+    private $pattern = null;
+
+    /**
+     * @var array
+     */
+    private $options = [
+        'n:' => "[0-9]{1,}", // numbers only
+        's:' => "[a-z]{1,}", // letters only
+        ':' => "[a-z0-9]{1,}" // numbers and letters
+    ];
+
+    /**
      * @param string
      * @param string
      */
     public function __construct($method, $path, $callback)
     {
         $this->method = $method;
-        $this->path = $path;
+        $this->path = self::normalizePath($path);
         $this->callback = $callback;
+        $this->init();
+    }
+
+    public function init()
+    {
+        $this->setParams();
+        $this->generatePattern();
+    }
+
+    /**
+     * Make sure the path starts with a slash and does not end with a slash
+     * @param string
+     * @return string
+     */
+    public static function normalizePath($path)
+    {
+        $path = trim($path, '/');
+        $path = '/' . $path;
+
+        return $path;
+    }
+
+    /**
+     * Get the parameters from path and set
+     * @return self
+     */
+    public function setParams()
+    {
+        preg_match_all("/\/([a-z0-9]|:|\**)*/m", $this->path, $params);
+        $this->params = $params[0];
+        return $this;
+    }
+
+    /**
+     * Generate pattern for this route
+     * @return string
+     */
+    public function generatePattern()
+    {
+        $patterns = [];
+        foreach ($this->params as $path)
+        {
+            $path = ltrim($path, '/');
+            $found = false;
+            foreach ($this->options as $placeholder => $part)
+            {
+                // Check if path has prefix
+                if (helper::str_starts_with($path, $placeholder))
+                {
+                    $patterns[] = "\/{$part}";
+                    $found = true;
+                    break;
+                }
+            }
+
+            // use path name if no prefix
+            if (!$found) $patterns[] = "\/{$path}";
+        }
+
+        $this->pattern = implode($patterns);
     }
 
 }
