@@ -3,6 +3,8 @@
 namespace Morphable\Routing;
 
 use Morphable\Helper;
+use Morphable\Http\Request;
+use Morphable\Http\Response;
 
 /**
  * Route related methods and properties
@@ -70,15 +72,30 @@ class Route {
         $this->init();
     }
 
+    /**
+     * Get route pattern
+     * @return string
+     */
     public function getPattern()
     {
         return $this->pattern;
     }
 
+    /**
+     * Execute this route
+     * @return void
+     */
     public function exec()
     {
+        $this->setReqRes();
         $cb = $this->callback;
         $cb($this->request, $this->response);
+    }
+
+    public function setReqRes()
+    {
+        $this->request = new Request();
+        $this->response = new Response();
     }
 
     /**

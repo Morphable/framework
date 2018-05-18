@@ -12,7 +12,19 @@ class UserController extends Controller {
 $router = new Router();
 
 $router->get("/user", function ($req, $res) {
-    echo "user index";
+    echo '<pre>';
+    print_r([
+        'req' => $req,
+        'res' => $res
+    ]);
+
+    $_SESSION['test'] = 'aaaaa';
+
+    echo '</pre>';
+});
+
+$router->get('/test', function () {
+    echo $_SESSION['test'];
 });
 
 $router->get("/user/s:username", function ($req, $res) {
