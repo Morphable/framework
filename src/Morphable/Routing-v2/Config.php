@@ -77,11 +77,17 @@ class Config {
      * @param string action name
      * @return void
      */
-    public function action($name)
+    public function action($name, $route = null)
     {
         foreach ($this->actions[$name] as $action)
         {
-            $action();
+            if ($route != null)
+            {
+                $action($route->getRequest(), $route->getResponse());
+                continue;
+            }
+
+            $action(null, null);
         }
     }
 

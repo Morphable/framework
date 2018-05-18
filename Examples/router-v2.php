@@ -34,11 +34,11 @@ $router->put('/user/s:username', function ($req, $res) {
     echo 'edit user</br>';
 });
 
-$router->on('before', function () {
+$router->on('before', function ($req, $res) {
     echo 'Before route</br>';
 });
 
-$router->on('after', function () {
+$router->on('after', function ($req, $res) {
     echo 'after route</br>';
 });
 

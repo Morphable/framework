@@ -16,12 +16,12 @@ use \Morphable\Http\Response;
 $router = new Router();
 
 // Before every route
-$router->on('before', function () {
+$router->on('before', function ($req, $res) {
     echo 'Before route</br>';
 });
 
 // After every route
-$router->on('after', function () {
+$router->on('after', function ($req, $res) {
     echo 'after route</br>';
 });
 

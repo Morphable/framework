@@ -29,7 +29,12 @@ class Response implements Interfaces\Response {
   }
 
   public function back () {
-    $this->redirect($_SESSION['framework']['previous_url']);
+    $fullUrl = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+    
+    if ($fullUrl != $_SESSION['framework']['previous_url'])
+    {
+      $this->redirect($_SESSION['framework']['previous_url']);
+    }
   }
 
 }

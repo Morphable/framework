@@ -18,17 +18,15 @@ class Dispatcher {
         {
             if(self::route($route))
             {
-                $router->getConfig()->action('before');
+                $router->getConfig()->action('before', $route);
                 $route->exec();
-                $router->getConfig()->action('after');
+                $router->getConfig()->action('after', $route);
                 $_SESSION['framework']['previous_url'] = $route->getRequest()->fullUrl;
                 die;
             }
         }
 
-        $router->getConfig()->action('before');
         $router->getConfig()->action('notFound');
-        $router->getConfig()->action('after');
     }
 
     /**
