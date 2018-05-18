@@ -14,7 +14,14 @@ class Dispatcher {
      */
     public static function router($router)
     {
-        # code...
+        foreach ($router->getRoutes($_SERVER['REQUEST_METHOD']) as $route)
+        {
+            if(self::route($route))
+            {
+                $route->exec();
+                die;
+            }
+        }
     }
 
     /**
@@ -22,7 +29,8 @@ class Dispatcher {
      */
     public static function route($route)
     {
-        # code...
+        preg_match("/^" . $route->getPattern() . "$/", Route::normalizePath($_SERVER['PATH_INFO']), $matches);
+        return count($matches) > 0;
     }
 
 }

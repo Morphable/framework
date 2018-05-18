@@ -19,8 +19,20 @@ $router->get("/user/s:username", function ($req, $res) {
     echo "user detail";
 });
 
-$router->get("/user/s:username/n:pageCount/", function ($req, $res) {
-    echo "user detail";
+$router->get('/user/s:username/posts', function ($req, $res) {
+    echo 'user posts';
 });
 
-$router->logRoutes();
+$router->get('/user/s:username/posts/s:postSlug', function ($req, $res) {
+    echo 'user post detail';
+});
+
+$router->post('/user', function ($req, $res) {
+    echo 'new user';
+});
+
+$router->put('/user/s:username', function ($req, $res) {
+    echo 'edit user';
+});
+
+$router->dispatch();

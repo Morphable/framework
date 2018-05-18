@@ -35,6 +35,16 @@ class Route {
     private $middlewares = [];
 
     /**
+     * @var object Morphable\Http\Request
+     */
+    private $request = null;
+
+    /**
+     * @var object Morphable\Http\Response
+     */
+    private $response = null;
+
+    /**
      * @var string
      */
     private $pattern = null;
@@ -60,10 +70,46 @@ class Route {
         $this->init();
     }
 
+    public function getPattern()
+    {
+        return $this->pattern;
+    }
+
+    public function exec()
+    {
+        $cb = $this->callback;
+        $cb($this->request, $this->response);
+    }
+
+    /**
+     * Set or add middleware
+     * @param mixed
+     * @return self
+     */
+    public function setMiddleware($mw)
+    {
+        if (is_array($mw))
+        {
+            $this->middlewares = array_merge($this->middlewares, $mw);
+        }
+        else
+        {
+            $this->middlewares[] = $mw;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Prepare this instance
+     * @return self
+     */
     public function init()
     {
         $this->setParams();
         $this->generatePattern();
+
+        return $this;
     }
 
     /**

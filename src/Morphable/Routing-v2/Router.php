@@ -27,40 +27,63 @@ class Router
     }
 
     /**
+     * Get config
+     * @return object Morphable\Routing\Config
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * Get routes
+     * @param string method (optional)
+     * @return array
+     */
+    public function getRoutes($method = null)
+    {
+        if ($method != null)
+        {
+            return $this->routes[$method];
+        }
+
+        return $this->routes;
+    }
+
+    /**
      * Add route to router
      * @param string
      * @param string
      * @param callable
-     * @return self
+     * @return object Routing\Route
      */
     private function addroute($method, $path, $callback)
     {
-        $this->routes[$method][] = new Route($method, $path, $callback);
-        return $this;
+        $r = new Route($method, $path, $callback);
+        $this->routes[$method][] = $r;
+        return $r;
     }
 
     /**
      * Add GET route
      * @param string
      * @param callable
-     * @return self
+     * @return object Routing\Route
      */
     public function get($path, $callback)
     {
-        $this->addRoute('GET', $path, $callback);
-        return $this;
+        return $this->addRoute('GET', $path, $callback);
     }
 
     /**
      * Add POST route
      * @param string
      * @param callable
-     * @return self
+     * @return object Routing\Route
      */
     public function post($path, $callback)
     {
-        $this->addRoute('POST', $path, $callback);
-        return $this;
+        return $this->addRoute('POST', $path, $callback);
     }
 
     /**
@@ -71,8 +94,18 @@ class Router
      */
     public function put($path, $callback)
     {
-        $this->addRoute('PUT', $path, $callback);
-        return $this;
+        return $this->addRoute('PUT', $path, $callback);
+    }
+
+    /**
+     * Add PATCH route
+     * @param string
+     * @param callable
+     * @return self
+     */
+    public function patch($path, $callback)
+    {
+        return $this->addRoute('PATCH', $path, $callback);
     }
 
     /**
@@ -83,8 +116,7 @@ class Router
      */
     public function delete($path, $callback)
     {
-        $this->addRoute('DELETE', $path, $callback);
-        return $this;
+        return $this->addRoute('DELETE', $path, $callback);
     }
 
     /**
@@ -148,7 +180,7 @@ class Router
      */
     public function dispatch()
     {
-
+        Dispatcher::router($this);
     }
 
 }
