@@ -21,9 +21,9 @@ class Config {
      * @var array
      */
     private $actions = [
-        'success' => [],
-        'done' => [],
-        'error' => []
+        'before' => [],
+        'after' => [],
+        'notFound' => []
     ];
 
     /**
@@ -70,6 +70,19 @@ class Config {
     {
         $this->actions[$action][] = $callback;
         return $this;
+    }
+
+    /**
+     * Execute action
+     * @param string action name
+     * @return void
+     */
+    public function action($name)
+    {
+        foreach ($this->actions[$name] as $action)
+        {
+            $action();
+        }
     }
 
 }

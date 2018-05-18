@@ -1,50 +1,49 @@
 <?php
 
 use Morphable\Routing\Router;
-use Morphable\Routing\Controller;
-
-class UserController extends Controller {
-
-  
-
-}
 
 $router = new Router();
 
 $router->get("/user", function ($req, $res) {
-    echo '<pre>';
-    print_r([
-        'req' => $req,
-        'res' => $res
-    ]);
-
-    $_SESSION['test'] = 'aaaaa';
-
-    echo '</pre>';
-});
-
-$router->get('/test', function () {
-    echo $_SESSION['test'];
+    echo 'user index</br>';
 });
 
 $router->get("/user/s:username", function ($req, $res) {
-    echo "user detail";
+    echo "user detail</br>";
+})
+->setMiddleware(function($req, $res) {
+    if ($req->params['username'] != 'kobus')
+    {
+        die('Youre not allowed');
+    }
 });
 
 $router->get('/user/s:username/posts', function ($req, $res) {
-    echo 'user posts';
+    echo 'user posts</br>';
 });
 
 $router->get('/user/s:username/posts/s:postSlug', function ($req, $res) {
-    echo 'user post detail';
+    echo 'user post detail</br>';
 });
 
 $router->post('/user', function ($req, $res) {
-    echo 'new user';
+    echo 'new user</br>';
 });
 
 $router->put('/user/s:username', function ($req, $res) {
-    echo 'edit user';
+    echo 'edit user</br>';
+});
+
+$router->on('before', function () {
+    echo 'Before route</br>';
+});
+
+$router->on('after', function () {
+    echo 'after route</br>';
+});
+
+$router->on('notFound', function () {
+    echo '404 Not found</br>';
 });
 
 $router->dispatch();

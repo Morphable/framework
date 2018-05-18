@@ -61,6 +61,11 @@ class Route {
     ];
 
     /**
+     * @var array
+     */
+    private $vars;
+
+    /**
      * @param string
      * @param string
      */
@@ -88,6 +93,12 @@ class Route {
     public function exec()
     {
         $this->setReqRes();
+
+        foreach ($this->middlewares as $mw)
+        {
+            $mw($this->request, $this->response);
+        }
+
         $cb = $this->callback;
         $cb($this->request, $this->response);
     }
@@ -95,6 +106,8 @@ class Route {
     public function setReqRes()
     {
         $this->request = new Request();
+        $this->setVars();
+        $this->request->setParams($this->vars);
         $this->response = new Response();
     }
 
@@ -142,6 +155,19 @@ class Route {
         return $path;
     }
 
+    public function setVars()
+    {
+        preg_match_all("/\/([a-z0-9]|:)*/", $this->normalizePath($this->request->url), $params);
+        
+        $params = $params[0];
+        $index = 0;
+        foreach ($this->vars as $key => $value)
+        {
+            $this->vars[$key] = str_replace('/', '', $params[$index]);
+            $index++;
+        }
+    }
+
     /**
      * Get the parameters from path and set
      * @return self
@@ -160,7 +186,8 @@ class Route {
     public function generatePattern()
     {
         $patterns = [];
-        foreach ($this->params as $path)
+        $vars = [];
+        foreach ($this->params as $key => $path)
         {
             $path = ltrim($path, '/');
             $found = false;
@@ -169,6 +196,7 @@ class Route {
                 // Check if path has prefix
                 if (helper::str_starts_with($path, $placeholder))
                 {
+                    $vars[str_replace($placeholder, "", $path)] = null;
                     $patterns[] = "\/{$part}";
                     $found = true;
                     break;
@@ -176,9 +204,14 @@ class Route {
             }
 
             // use path name if no prefix
-            if (!$found) $patterns[] = "\/{$path}";
+            if (!$found)
+            {
+                $vars[$path] = null;
+                $patterns[] = "\/{$path}";
+            }
         }
 
+        $this->vars = $vars;
         $this->pattern = implode($patterns);
     }
 

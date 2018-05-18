@@ -18,10 +18,16 @@ class Dispatcher {
         {
             if(self::route($route))
             {
+                $router->getConfig()->action('before');
                 $route->exec();
+                $router->getConfig()->action('after');
                 die;
             }
         }
+
+        $router->getConfig()->action('before');
+        $router->getConfig()->action('notFound');
+        $router->getConfig()->action('after');
     }
 
     /**

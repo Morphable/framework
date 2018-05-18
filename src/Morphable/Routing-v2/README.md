@@ -1,7 +1,8 @@
 # Morphable Routing
 
-## Usage
+## Code
 ```PHP
+<?php
 // Factory
 use \Morphable\Routing\Router;
 
