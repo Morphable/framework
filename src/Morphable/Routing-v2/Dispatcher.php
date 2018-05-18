@@ -21,6 +21,7 @@ class Dispatcher {
                 $router->getConfig()->action('before');
                 $route->exec();
                 $router->getConfig()->action('after');
+                $_SESSION['framework']['previous_url'] = $route->getRequest()->fullUrl;
                 die;
             }
         }

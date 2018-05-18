@@ -11,6 +11,8 @@ class Request implements Interfaces\Request {
   public $cookies;
   public $headers;
 
+  public $fullUrl;
+
   function __construct () {
     
     if (isset($_SERVER['PATH_INFO'])) {
@@ -25,6 +27,8 @@ class Request implements Interfaces\Request {
     $this->host = $_SERVER['SERVER_NAME'];
     $this->cookies = $_COOKIE;
     $this->headers = getallheaders();
+    $this->fullUrl = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+
     return $this;
   }
 

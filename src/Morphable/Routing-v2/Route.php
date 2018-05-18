@@ -86,6 +86,16 @@ class Route {
         return $this->pattern;
     }
 
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
     /**
      * Execute this route
      * @return void

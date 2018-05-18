@@ -7,7 +7,6 @@ class Response implements Interfaces\Response {
   public function redirect ($url) {
     $this->status(301);
     header('Location: ' . $url);
-    exit;
   }
 
   public function status ($code) {
@@ -18,14 +17,19 @@ class Response implements Interfaces\Response {
     return header("$type: $value");
   }
 
-  public function json (Array $json) {
+  public function json ($json) {
     $this->header('Content-type', 'application/json');
     echo json_encode($json);
-    exit;
+  }
+
+  public function xml($xml)
+  {
+    $this->header('Content-type', 'application/xml');
+    echo $xml;
   }
 
   public function back () {
-    $this->redirect($_SESSION['previous_url']);
+    $this->redirect($_SESSION['framework']['previous_url']);
   }
 
 }
