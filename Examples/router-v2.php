@@ -4,6 +4,10 @@ use Morphable\Routing\Router;
 
 $router = new Router();
 
+$router->get('/', function ($req, $res) {
+    echo 'home</br>';
+});
+
 $router->get("/user", function ($req, $res) {
     echo 'user index</br>';
 });

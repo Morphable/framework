@@ -2,12 +2,10 @@
 
 namespace Morphable\Routing;
 
+/**
+ * Handles executing the router and it's routes
+ */
 class Dispatcher {
-
-    /**
-     * @var array
-     */
-    private $status;
 
     /**
      * @param object
@@ -34,7 +32,8 @@ class Dispatcher {
      */
     public static function route($route)
     {
-        preg_match("/^" . $route->getPattern() . "$/", Route::normalizePath($_SERVER['PATH_INFO']), $matches);
+        $path = Route::normalizePath(explode('?',$_SERVER['REQUEST_URI'])[0]);
+        preg_match("/^" . $route->getPattern() . "$/", $path, $matches);
         return count($matches) > 0;
     }
 

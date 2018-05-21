@@ -7,7 +7,7 @@ use Morphable\Http\Request;
 use Morphable\Http\Response;
 
 /**
- * Route related methods and properties
+ * Saves and prepares a single route
  */
 class Route {
 
@@ -86,11 +86,19 @@ class Route {
         return $this->pattern;
     }
 
+    /**
+     * Get request object
+     * @return object \Morphable\Http\Request
+     */
     public function getRequest()
     {
         return $this->request;
     }
 
+    /**
+     * Get response object
+     * @return object \Morphable\Http\Response
+     */
     public function getResponse()
     {
         return $this->response;
@@ -113,6 +121,10 @@ class Route {
         $cb($this->request, $this->response);
     }
 
+    /**
+     * Set request and response object
+     * @return void
+     */
     public function setReqRes()
     {
         $this->request = new Request();
@@ -165,6 +177,10 @@ class Route {
         return $path;
     }
 
+    /**
+     * Set the values for vars
+     * @return void
+     */
     public function setVars()
     {
         preg_match_all("/\/([a-z0-9]|:)*/", $this->normalizePath($this->request->url), $params);
@@ -190,7 +206,7 @@ class Route {
     }
 
     /**
-     * Generate pattern for this route
+     * Generate pattern for this route, and set the keys for this->vars
      * @return string
      */
     public function generatePattern()
